@@ -100,6 +100,39 @@ function CardMetrics({ metrics }) {
   )
 }
 
+// People grid — stakeholder chips with initials avatar + name + role.
+function CardPeople({ people }) {
+  return (
+    <div className="card-people">
+      {people.map((person, i) => (
+        <div key={i} className="card-person">
+          <div
+            className="card-person-avatar"
+            style={{ background: person.color || '#6264A7' }}
+          >
+            {person.initials}
+          </div>
+          <div className="card-person-text">
+            <div className="card-person-name">{person.name}</div>
+            <div className="card-person-role">{person.role}</div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// Tool / tag chips — a flex-wrap row of pill labels.
+function CardChips({ chips }) {
+  return (
+    <div className="card-chips">
+      {chips.map((chip, i) => (
+        <span key={i} className="card-chip">{chip}</span>
+      ))}
+    </div>
+  )
+}
+
 function CardBars({ bars }) {
   const max = bars.reduce((acc, b) => Math.max(acc, b.value), 0) || 1
   return (
@@ -170,6 +203,14 @@ function ThreadReplyBadge({ reply, onClick }) {
 }
 
 export default function MessageRow({ message, activeContact, onOpenThread }) {
+  if (message.isSystem) {
+    return (
+      <div className="system-message">
+        <span className="system-message-text">{message.text}</span>
+      </div>
+    )
+  }
+
   const isMe = message.senderId === 'me'
   const isMultiParty = activeContact.isGroup || activeContact.isChannel
   const sender = isMe
@@ -255,6 +296,8 @@ export default function MessageRow({ message, activeContact, onOpenThread }) {
                           {section.heading && <div className="card-section-heading">{section.heading}</div>}
                           {section.text && <div className="card-section-text">{section.text}</div>}
                           {section.facts && <CardFacts facts={section.facts} />}
+                          {section.people && <CardPeople people={section.people} />}
+                          {section.chips && <CardChips chips={section.chips} />}
                           {section.bullets && (
                             <ul className="card-bullets">
                               {section.bullets.map((b, k) => <li key={k}>{b}</li>)}

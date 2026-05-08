@@ -722,3 +722,98 @@
 .session-source-banner-link:hover {
   text-decoration: underline;
 }
+
+/* ── System messages (e.g. "Claude was added to the conversation") ──────
+   Centered full-width row with a horizontal rule on each side.           */
+.system-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 6px;
+  margin: 4px 0;
+}
+
+.system-message::before,
+.system-message::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E8E8E8;
+}
+
+.system-message-text {
+  flex-shrink: 0;
+  font-size: 11.5px;
+  color: #888;
+  white-space: nowrap;
+}
+
+/* ── Stakeholder people grid (card section type: people) ────────────── */
+.card-people {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 10px;
+  margin-top: 2px;
+}
+
+.card-person {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.card-person-avatar {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.02em;
+}
+
+.card-person-text {
+  min-width: 0;
+}
+
+.card-person-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: #242424;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-person-role {
+  font-size: 11px;
+  color: #707070;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Tool / tag chips (card section type: chips) ─────────────────────── */
+.card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.card-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  border: 1px solid #D0D0D0;
+  background: #F5F5F5;
+  font-size: 11.5px;
+  color: #424242;
+  font-weight: 500;
+}

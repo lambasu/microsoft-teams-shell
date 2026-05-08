@@ -627,35 +627,165 @@ export const messagesByContact = {
 
   // ── Northwind launch (group) ──────────────────────────────────────────
   23: [
-    { id: 1, senderId: 12, text: 'Launch is 3 days out (April 25). Walking the readiness checklist today so we can flag any risks before the weekend.', time: 'Mon 8:45 AM' },
-    { id: 2, senderId: 'me', text: 'PM side is green. PRD is final, partner FAQ drafted, docs handoff to David tomorrow.', time: 'Mon 8:48 AM' },
-    { id: 3, senderId: 10, text: 'Docs are ~80% there — blocking on the final auth PR so I can write the migration note. Everything else is ready for review.', time: 'Mon 8:52 AM' },
-    { id: 4, senderId: 15, text: 'Auth PR should land tomorrow afternoon. Will ping the moment it merges.', time: 'Mon 8:54 AM' },
-    { id: 5, senderId: 12, text: 'What about the launch blog post — do we have a draft?', time: 'Mon 8:58 AM' },
-    { id: 6, senderId: 'me', text: 'Drafting this week. Something circulatable by Friday EOD.', time: 'Mon 9:00 AM' },
-    { id: 7, senderId: 12, text: 'Rollout plan — 10% of tenants Monday 9am PT, monitor for 24 hours, expand to 50% Tuesday morning if clean, 100% Wednesday EOD. Everyone good with this?', time: 'Mon 2:00 PM' },
+    // ── Week of Apr 7 — scoping + design alignment ─────────────────────
+    { id: 1, senderId: 12, text: 'Kicking off launch planning for Agents Platform v2. Target: April 25. I\'ll own go/no-go. Kevin owns architecture sign-off. James DRI on telemetry gates. Everyone else: flag blockers to me directly.', time: 'Apr 7 9:00 AM', reactions: [{ emoji: '👍', count: 6 }] },
+    { id: 2, senderId: 15, text: 'Eng side: three areas — context packet handoff, CDN strategy for token routing, and guest-tenant auth. CDN is still open; will land a decision by April 14.', time: 'Apr 7 9:12 AM' },
+    { id: 3, senderId: 'me', text: 'PRD is in final review. Partner FAQ is drafted. I\'ll circulate the launch brief skeleton this week — need Kevin\'s input on the "how handoffs work" section.', time: 'Apr 7 9:18 AM' },
+    { id: 4, senderId: 1, text: 'Design: Variant C is locked for the empty-state. Sharing the file now — main flows are ready, error states are in progress.', time: 'Apr 7 10:05 AM' },
     {
-      id: 8,
+      id: 5,
+      senderId: 1,
+      text: 'Current design file — all screens through onboarding v3. Error states (auth, expired, rate-limit) are on the last page, still WIP.',
+      link: {
+        source: 'figma',
+        title: 'Agents Platform v2 — Launch · All flows',
+        subtitle: 'figma.com · last edited by Sarah Chen',
+        url: 'https://figma.com/file/nw-agentsv2-launch',
+      },
+      time: 'Apr 7 10:07 AM',
+      reactions: [{ emoji: '🙌', count: 4 }],
+    },
+    { id: 6, senderId: 9, text: 'Webhook retry logic PR is up — JIRA-4488. Exponential backoff with jitter. Needs review from Kevin before it can merge.', time: 'Apr 8 11:00 AM' },
+    {
+      id: 7,
+      senderId: 12,
+      text: 'Sharing the launch readiness checklist. Everyone owns their row. Red = blocker, yellow = at-risk, green = done.',
+      cards: [
+        {
+          type: 'file',
+          fileType: 'excel',
+          name: 'Agents Platform v2 — Launch readiness checklist',
+          subtitle: 'Shared with Northwind launch group · Rachel Thompson',
+        },
+      ],
+      time: 'Apr 8 2:00 PM',
+    },
+    { id: 8, senderId: 3, text: 'QA plan drafted — 142 test cases covering handoff flows, guest tenant, and rate-limit paths. Running automated suite nightly on staging starting April 14.', time: 'Apr 9 10:30 AM' },
+    { id: 9, senderId: 15, text: 'JIRA-4488 merged. Webhook retry with jitter is live on staging. Olivia — nice work on the backoff impl.', time: 'Apr 9 4:45 PM', reactions: [{ emoji: '✅', count: 3 }] },
+
+    // ── Week of Apr 14 — eng progress + telemetry + CDN decision ──────
+    { id: 10, senderId: 15, text: 'CDN decision: going with Azure Front Door for token routing. Lower latency to APAC tenants, integrates with existing mTLS setup. No custom infra needed.', time: 'Apr 14 9:00 AM', reactions: [{ emoji: '👍', count: 4 }] },
+    { id: 11, senderId: 7, text: 'Telemetry gates are set in Grafana. Monitoring: error rate, handoff p99 latency, cross-tenant failure rate. Alerting on Slack + PagerDuty. I\'m DRI — ping me if numbers look off.', time: 'Apr 14 10:15 AM' },
+    {
+      id: 12,
+      senderId: 7,
+      text: 'Staging baseline from last week — for reference. p99 handoff latency is 340ms; error rate 0.31%. These are our green-light benchmarks.',
+      cards: [
+        {
+          type: 'file',
+          fileType: 'excel',
+          name: 'Agents Platform v2 — Staging telemetry baseline, Apr 7–13',
+          subtitle: 'Shared with Northwind launch group · James Kim',
+        },
+      ],
+      time: 'Apr 14 10:20 AM',
+    },
+    { id: 13, senderId: 'me', text: 'Architecture review done on the handoff section. One flag: context packet TTL and auth token TTL are still conflated in the spec. Kevin, can you add a note clarifying they\'re separate concerns?', time: 'Apr 15 11:00 AM' },
+    { id: 14, senderId: 15, text: 'Good catch. Updating the spec now — TTLs are separate: context freshness vs. auth lifetime. Will comment in the PRD doc.', time: 'Apr 15 11:30 AM', reactions: [{ emoji: '🙏', count: 1 }] },
+    {
+      id: 15,
+      senderId: 'me',
+      text: 'Launch brief v1 is ready for review. Sections 1–3 are solid; section 4 (partner onboarding) needs Kevin\'s input on technical accuracy.',
+      cards: [
+        {
+          type: 'file',
+          fileType: 'word',
+          name: 'Agents Platform v2 — Launch brief',
+          subtitle: 'Shared with Northwind launch group · Alex Morgan',
+        },
+      ],
+      time: 'Apr 15 3:00 PM',
+    },
+    { id: 16, senderId: 3, text: 'Automated suite ran overnight — 142/142 green. No flakes. Cross-tenant path has 2 happy-path traces; edge cases (guest tenant, expired token mid-handoff) still need manual coverage before April 22.', time: 'Apr 16 9:00 AM', reactions: [{ emoji: '✅', count: 2 }] },
+    {
+      id: 17,
       senderId: 15,
-      text: 'Good with staged rollout. Adding: define "clean" explicitly so we don\'t have the 50%/100% expansion debates mid-rollout. Proposal: <0.5% error rate, no P1s open, smoke tests green.',
+      text: 'JIRA-4552 — delegation timeout during handoff — merged. This was the last arch-risk item. Engineering is green for launch.',
+      link: {
+        source: 'github',
+        title: 'Handle delegation timeout during agent handoff',
+        subtitle: 'northwind/agent-handoff #4552 · Merged · Kevin Park',
+        url: '#',
+      },
+      time: 'Apr 18 5:10 PM',
+      reactions: [{ emoji: '🚀', count: 5 }, { emoji: '🎉', count: 3 }],
+    },
+
+    // ── Week of Apr 21 — final prep ────────────────────────────────────
+    { id: 18, senderId: 12, text: 'Launch is 3 days out. Walking the readiness checklist today so we can flag any risks before the weekend.', time: 'Mon 8:45 AM' },
+    { id: 19, senderId: 'me', text: 'PM side is green. PRD is final, partner FAQ drafted, docs handoff to David tomorrow.', time: 'Mon 8:48 AM' },
+    { id: 20, senderId: 15, text: 'Rollout plan — 10% of tenants Monday 9am PT, monitor for 24 hours, expand to 50% Tuesday morning if clean, 100% Wednesday EOD.', time: 'Mon 2:00 PM' },
+    {
+      id: 21,
+      senderId: 15,
+      text: 'Defining "clean" for rollout gates: <0.5% error rate, no P1s open, smoke tests green.',
       time: 'Mon 2:10 PM',
       replies: [
-        { id: 'g23-8-r1', senderId: 7, text: '+1 to <0.5%. Last sprint baseline was 0.31% — 0.5% gives breathing room without false-greens.', time: 'Mon 2:18 PM' },
-        { id: 'g23-8-r2', senderId: 'me', text: 'P1 definition stays per the runbook? Want to make sure "no P1s open" is testable.', time: 'Mon 2:22 PM' },
-        { id: 'g23-8-r3', senderId: 15, text: 'Yes — runbook P1 definition. James and oncall agree.', time: 'Mon 2:25 PM' },
-        { id: 'g23-8-r4', senderId: 12, text: 'Codifying in the rollout doc now. Will share for sign-off before EOD.', time: 'Mon 2:30 PM', reactions: [{ emoji: '✅', count: 3 }] },
+        { id: 'g23-21-r1', senderId: 7, text: '+1 to <0.5%. Last sprint baseline was 0.31% — 0.5% gives breathing room without false-greens.', time: 'Mon 2:18 PM' },
+        { id: 'g23-21-r2', senderId: 'me', text: 'P1 definition stays per the runbook? Want "no P1s open" to be testable.', time: 'Mon 2:22 PM' },
+        { id: 'g23-21-r3', senderId: 15, text: 'Yes — runbook P1 definition. James and oncall agree.', time: 'Mon 2:25 PM' },
+        { id: 'g23-21-r4', senderId: 12, text: 'Codifying in the rollout doc now. Will share for sign-off before EOD.', time: 'Mon 2:30 PM', reactions: [{ emoji: '✅', count: 3 }] },
       ],
     },
-    { id: 9, senderId: 'me', text: '+1 to explicit definition. Also — if we pause at 50%, who\'s the call-maker? Rachel?', time: 'Mon 2:15 PM' },
-    { id: 10, senderId: 12, text: 'Me. Decision owner. James is DRI on the telemetry and flags the numbers; I make the go/no-go call.', time: 'Mon 2:18 PM', reactions: [{ emoji: '👍', count: 5 }] },
-    { id: 11, senderId: 10, text: 'Auth PR merged. Writing the migration note now. Will share for review EOD.', time: 'Tue 11:15 AM' },
-    { id: 12, senderId: 'me', text: 'Perfect. Also filed JIRA-4595 for post-launch: document cross-tenant handoff for partner readouts. David\'s assigned, due May 2.', time: 'Tue 11:20 AM' },
-    { id: 13, senderId: 15, text: 'Heads up — new issue from Emma\'s manual QA pass. Guest tenant blank page on expired token. JIRA-4593. Owning the fix; targeting EOD.', time: 'Today 8:30 AM' },
-    { id: 14, senderId: 12, text: 'Ok — if it lands by EOD today, we\'re still on track. If it slips to tomorrow, let\'s regroup at 9am to decide whether to ship or delay.', time: 'Today 8:35 AM' },
-    { id: 15, senderId: 'me', text: 'Agreed. Friday 9am regroup with or without the fix just so we have a checkpoint.', time: 'Today 8:40 AM' },
-    { id: 16, senderId: 15, text: 'Fix in draft. 20-line change. Will have PR up before 7pm tonight.', time: 'Today 5:20 PM' },
-    { id: 17, senderId: 12, text: 'Blog feedback — just read v2. Strong. One copy tweak: the social share paragraph is too long. Cut the last sentence.', time: 'Today 3:45 PM' },
-    { id: 18, senderId: 'me', text: 'Cut. Also rebalanced the demo callout sizes — felt like the second one was getting too much visual weight.', time: 'Today 3:50 PM', reactions: [{ emoji: '📝', count: 2 }] },
+    { id: 22, senderId: 12, text: 'Go/no-go ownership confirmed: I make the call at each expansion gate. James flags the numbers from Grafana + Snowflake. Kevin is the escalation path if infra looks off.', time: 'Mon 2:20 PM', reactions: [{ emoji: '👍', count: 5 }] },
+    { id: 23, senderId: 3, text: 'Manual QA results — 8 scenarios, 7 pass. Fail: guest tenant blank page on expired token re-auth. Filed JIRA-4593. Launch-blocking.', time: 'Tue 4:20 PM', reactions: [{ emoji: '🐛', count: 1 }] },
+    { id: 24, senderId: 15, text: 'Heads up on JIRA-4593 — guest tenant blank page on expired token. Owning the fix, targeting EOD today.', time: 'Today 8:30 AM' },
+    { id: 25, senderId: 12, text: 'Ok — if it lands by EOD today we\'re still on track. If it slips, regroup at 9am tomorrow to decide ship or delay.', time: 'Today 8:35 AM' },
+    { id: 26, senderId: 'me', text: 'Agreed. Friday 9am checkpoint regardless — with or without the fix.', time: 'Today 8:40 AM' },
+    { id: 27, senderId: 12, text: 'Blog feedback — just read v2. Strong. One tweak: the social share paragraph is too long. Cut the last sentence.', time: 'Today 3:45 PM' },
+    { id: 28, senderId: 'me', text: 'Cut. Also rebalanced the demo callout sizes — second one was getting too much weight.', time: 'Today 3:50 PM', reactions: [{ emoji: '📝', count: 2 }] },
+    { id: 29, senderId: 15, text: 'JIRA-4593 fix is in draft — 20-line change. PR up before 7pm tonight.', time: 'Today 5:20 PM' },
+
+    // ── Agent added + onboarding welcome ──────────────────────────────
+    { id: 30, isSystem: true, text: 'Claude was added to the conversation', time: 'Today 5:22 PM' },
+    {
+      id: 31,
+      senderId: 2,
+      text: null,
+      cards: [
+        {
+          accentColor: '#D97757',
+          title: 'I\'ve read this thread — ready to help',
+          subtitle: 'Here\'s what I already know. No need to brief me.',
+          sections: [
+            {
+              heading: 'Who\'s here',
+              people: [
+                { name: 'Rachel Thompson', role: 'PM · go/no-go owner', initials: 'RT', color: '#7160E8' },
+                { name: 'Kevin Park', role: 'Eng lead · architecture + CDN', initials: 'KP', color: '#038387' },
+                { name: 'James Kim', role: 'Analytics · Grafana & Snowflake DRI', initials: 'JK', color: '#CA5010' },
+                { name: 'Olivia Martinez', role: 'Backend · webhooks + token refresh', initials: 'OM', color: '#DA3B01' },
+                { name: 'Sarah Chen', role: 'Design · Figma owner', initials: 'SC', color: '#6264A7' },
+                { name: 'Emma Larsen', role: 'QA · manual test coverage', initials: 'EL', color: '#E74856' },
+              ],
+            },
+            {
+              heading: 'Tools in use',
+              chips: ['Jira', 'Figma', 'GitHub', 'Grafana', 'Snowflake', 'Azure Front Door', 'PagerDuty'],
+            },
+            {
+              heading: 'Files shared in this thread',
+              bullets: [
+                'Launch readiness checklist (Excel · Rachel) — team owns individual rows',
+                'Staging telemetry baseline Apr 7–13 (Excel · James) — p99 340ms, error rate 0.31%',
+                'Launch brief v1 (Word · Alex) — section 4 flagged for Kevin\'s review',
+                'Agents Platform v2 — all flows (Figma · Sarah) — error states WIP on last page',
+              ],
+            },
+            {
+              heading: 'Where I can help right now',
+              bullets: [
+                'JIRA-4593 is open and launch-blocking — Kevin has a draft fix in progress. Want me to watch the PR and post here when it merges?',
+                'Launch brief section 4 still needs Kevin\'s technical review — I can draft a starting point from the architecture notes in the thread.',
+                'Friday 9am go/no-go is the next gate — I can prep a one-page readiness summary for Rachel from the checklist and Grafana baseline.',
+              ],
+            },
+          ],
+          actions: ['Track JIRA-4593 PR', 'Draft section 4', 'Prep go/no-go summary'],
+        },
+      ],
+      time: 'Today 5:23 PM',
+    },
   ],
 
   // ── Figma agent ───────────────────────────────────────────────────────

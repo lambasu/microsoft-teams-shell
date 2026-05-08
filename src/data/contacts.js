@@ -97,7 +97,7 @@ export const projectNorthwind = [
   { contactId: 21, bold: true },
   { contactId: 25, bold: true },
   { contactId: 22 },
-  { contactId: 23 },
+  { contactId: 23, bold: true },
   { contactId: 24 },
 ]
 
