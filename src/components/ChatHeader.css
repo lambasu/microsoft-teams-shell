@@ -65,6 +65,27 @@
   border-radius: 2px;
 }
 
+.chat-view-tab.tab-pinned {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #5B5FC7;
+}
+
+.chat-view-tab.tab-pinned:hover {
+  color: #4448B3;
+}
+
+.chat-view-tab.tab-pinned.active {
+  color: #4448B3;
+  font-weight: 600;
+}
+
+.tab-pin-icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
 .chat-view-tab.tab-add {
   color: #616161;
   padding: 14px 8px;

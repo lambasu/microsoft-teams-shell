@@ -748,6 +748,12 @@
   white-space: nowrap;
 }
 
+.system-message-icon {
+  flex-shrink: 0;
+  color: #5B5FC7;
+  opacity: 0.8;
+}
+
 /* ── Stakeholder people grid (card section type: people) ────────────── */
 .card-people {
   display: grid;

@@ -206,6 +206,12 @@ export default function MessageRow({ message, activeContact, onOpenThread }) {
   if (message.isSystem) {
     return (
       <div className="system-message">
+        {message.systemIcon === 'pin' && (
+          <svg className="system-message-icon" width="12" height="12" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path d="M13.5 2a.5.5 0 0 1 .354.146l4 4A.5.5 0 0 1 17.5 7c0 .97-.97 1.97-2.5 2.5L12 14H9.5a.5.5 0 0 1-.354-.854L11 11.293 8.707 9 6.854 10.854A.5.5 0 0 1 6 10.5V8L10.5 5C11.03 3.47 12.03 2.5 13 2.5l.5-.5z"/>
+            <path d="M3.5 14.5 8 10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+          </svg>
+        )}
         <span className="system-message-text">{message.text}</span>
       </div>
     )

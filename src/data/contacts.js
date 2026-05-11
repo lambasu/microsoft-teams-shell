@@ -49,6 +49,7 @@ export const contacts = [
   { id: 31, name: 'Figma', initials: null, color: '#FFFFFF', status: null, isAgent: true, logo: 'figma', avatar: `${base}avatars/figma.png`, logoInset: true, description: 'Design files and component libraries' },
   { id: 32, name: 'Cowork', initials: null, color: '#FFFFFF', status: null, isAgent: true, logo: 'cowork', avatar: `${base}avatars/cowork.png`, logoInset: true, description: 'Async collaboration and document workflows' },
   { id: 33, name: 'AC Test', initials: 'AC', color: '#5B5FC7', status: null, isGroup: true, memberCount: 5 },
+  { id: 34, name: 'Northwind launch', initials: 'NL', color: '#0078D4', status: null, isGroup: true, memberCount: 7, contextBriefId: 34 },
 ]
 
 // Teams the user belongs to. Each team has a list of channels (by contact id,
@@ -98,6 +99,7 @@ export const projectNorthwind = [
   { contactId: 25, bold: true },
   { contactId: 22 },
   { contactId: 23, bold: true },
+  { contactId: 34, bold: true },
   { contactId: 24 },
 ]
 

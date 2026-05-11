@@ -12,8 +12,10 @@ import {
   designerAgent,
   pollyAgent,
   breakthuAgent,
+  contextBriefs,
 } from '../data'
 import { TypingIndicator } from './common'
+import ContextBriefPanel from './ContextBriefPanel'
 import MessageRow from './MessageRow'
 import SessionsRail from './SessionsRail'
 import AgentsRail from './AgentsRail'
@@ -119,6 +121,7 @@ export default function ChatView({
   const [channelThreadPostId, setChannelThreadPostId] = useState(null)
   const [threadRailOpen, setThreadRailOpen] = useState(false)
   const [highlightMessageId, setHighlightMessageId] = useState(null)
+  const [activeTab, setActiveTab] = useState('chat')
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -140,6 +143,7 @@ export default function ChatView({
     setChannelThreadPostId(null)
     setThreadRailOpen(false)
     setHighlightMessageId(null)
+    setActiveTab('chat')
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
     if (intentHasSession) {
@@ -530,6 +534,9 @@ export default function ChatView({
   const agentSuggestions = isAgent ? promptSuggestions[activeChatId] : null
   const showPromptSuggestions = !!agentSuggestions && messages.length === 0 && mainTypingAgentId !== activeChatId
 
+  const contextBrief = activeContact.contextBriefId ? contextBriefs[activeContact.contextBriefId] : null
+  const pinnedTab = contextBrief ? { label: contextBrief.filename } : null
+
   return (
     <div className="chat-view">
       <div className="chat-view-main">
@@ -550,8 +557,14 @@ export default function ChatView({
               setThreadRailOpen(true)
             }
           }}
+          pinnedTab={pinnedTab}
+          activeTab={activeTab}
+          onSelectTab={setActiveTab}
         />
 
+        {activeTab === 'pinned' && contextBrief ? (
+          <ContextBriefPanel brief={contextBrief} />
+        ) : (
         <div className="chat-messages">
           {isChannel ? (
             <div className="messages-container messages-container-channel">
@@ -616,6 +629,7 @@ export default function ChatView({
             </div>
           )}
         </div>
+        )}
 
         <div className="chat-compose-area">
           {mainTypingAgentId === activeChatId && (
