@@ -900,6 +900,71 @@ export const messagesByContact = {
     { id: 31, isSystem: true, text: 'Claude created context-brief.md and pinned it to this chat', time: 'Today 5:23 PM', systemIcon: 'pin' },
   ],
 
+  // ── Northwind sprint sync — group intelligence prototype (contact 35) ──
+  // Scenario: Olivia @mentions Jira to create a ticket. A few messages later
+  // James asks about the bug without @mentioning Jira or citing a ticket number.
+  // The classifier detects relevance and fires a targeted private message.
+  35: [
+    { id: 1, senderId: 15, text: 'Morning all — quick async standup. Kevin here. JIRA-4552 merged last night, delegation timeout is resolved. Working on auth edge cases today.', time: 'Today 9:01 AM' },
+    { id: 2, senderId: 9, text: 'Olivia — webhook retry backoff is stable on staging. p99 is 210ms, within target. Moving to token refresh cleanup today.', time: 'Today 9:03 AM' },
+    { id: 3, senderId: 7, text: 'James — Grafana dashboards are green. Handoff success rate holding at 95.3% on staging. No alert noise overnight.', time: 'Today 9:04 AM' },
+    { id: 4, senderId: 'me', text: 'Alex — PRD final, blog v2 in review with Rachel. No blockers on my end. Anyone need PM help today?', time: 'Today 9:05 AM' },
+    { id: 5, senderId: 3, text: 'Emma — ran the guest tenant scenarios manually this morning. Found something: blank page on expired token re-auth. Repro\'d twice. Not filed yet.', time: 'Today 9:08 AM' },
+    { id: 6, senderId: 15, text: 'That sounds launch-blocking. Can someone get that into the board?', time: 'Today 9:09 AM' },
+    {
+      id: 7,
+      senderId: 9,
+      text: [
+        { type: 'mention', name: 'Jira' },
+        ' create a ticket: guest tenant blank page on expired token re-auth. P1. Assign to Kevin. Due Friday.',
+      ],
+      time: 'Today 9:10 AM',
+    },
+    {
+      id: 8,
+      senderId: 4,
+      text: 'Created JIRA-4593.',
+      link: {
+        source: 'jira',
+        title: 'JIRA-4593 — Guest tenant blank page on expired token re-auth',
+        subtitle: 'New · Kevin Park · P1 · Due Apr 25',
+        url: '#',
+      },
+      time: 'Today 9:10 AM',
+      reactions: [{ emoji: '✅', count: 2 }],
+    },
+    { id: 9, senderId: 15, text: 'On it. Should be a contained fix — the re-auth prompt isn\'t firing when the token expires mid-session for guest tenants specifically.', time: 'Today 9:12 AM' },
+    { id: 10, senderId: 3, text: 'I can write up repro steps and attach them. Need the Figma error state for the re-auth prompt too — want to make sure we\'re matching the right screen.', time: 'Today 9:13 AM' },
+    { id: 11, senderId: 'me', text: 'Sarah has the error state mocks — they\'re in the launch Figma file, last page. I\'ll drop a link in the ticket.', time: 'Today 9:15 AM' },
+    { id: 12, senderId: 7, text: 'Do we want to add a Grafana alert for guest tenant auth failures specifically? We\'re not monitoring that path separately right now.', time: 'Today 9:18 AM' },
+    { id: 13, senderId: 15, text: 'Yes — let\'s add it. If this surfaces in prod we want to know immediately. James can you set that up?', time: 'Today 9:19 AM', reactions: [{ emoji: '👍', count: 1 }] },
+    { id: 14, senderId: 7, text: 'On it. Will have it live before EOD.', time: 'Today 9:20 AM' },
+    { id: 15, senderId: 9, text: 'One more thing — the token refresh PR from last week, JIRA-4572, do we want to include that in the launch train or defer?', time: 'Today 9:35 AM' },
+    { id: 16, senderId: 'me', text: 'Include it. It\'s directly related to the expired token issue Emma found. Risky to ship without it.', time: 'Today 9:37 AM' },
+    { id: 17, senderId: 15, text: 'Agreed. I\'ll pull it into the train. Emma — can you add a manual test case for that path once Kevin\'s fix is up?', time: 'Today 9:38 AM' },
+    { id: 18, senderId: 3, text: 'Will do. I\'ll also test the re-auth prompt across iOS Safari, Chrome Android, and Edge desktop — the three platforms we saw the most issues on last sprint.', time: 'Today 9:40 AM' },
+    { id: 19, senderId: 7, text: 'btw did that bug Emma flagged this morning end up getting tracked? want to make sure it\'s not lost before we close standup', time: 'Today 9:44 AM' },
+    // Jira's targeted private message — classifier fires on James's message.
+    // isPrivate: visible only to the current user (me). Not visible to the group.
+    {
+      id: 20,
+      senderId: 4,
+      isPrivate: true,
+      classifier: {
+        confidence: 82,
+        topic: 'issue tracking',
+        matched: ['bug', 'tracked', 'flagged'],
+        context: 'JIRA-4593 was created earlier in this thread',
+      },
+      text: 'I think James is asking about JIRA-4593 — the guest tenant bug Olivia filed earlier. Want me to confirm it\'s tracked and share the status with the group?',
+      targetedActions: [
+        { label: 'Yes, respond to group', action: 'confirm' },
+        { label: 'Skip', action: 'skip' },
+      ],
+      time: 'Today 9:44 AM',
+    },
+  ],
+
   // ── Figma agent ───────────────────────────────────────────────────────
   31: [
     { id: 1, senderId: 31, text: 'Hi Alex — I\'m the Figma agent. Ask me about files, frames, components, or recent edits in your team library.', time: 'Mon 9:00 AM' },

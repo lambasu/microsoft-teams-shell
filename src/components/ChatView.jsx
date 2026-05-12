@@ -122,6 +122,9 @@ export default function ChatView({
   const [threadRailOpen, setThreadRailOpen] = useState(false)
   const [highlightMessageId, setHighlightMessageId] = useState(null)
   const [activeTab, setActiveTab] = useState('chat')
+  // Group intelligence demo flow (chat 35): track whether the targeted
+  // message has been acted on so we can replace it with the group response.
+  const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -144,6 +147,7 @@ export default function ChatView({
     setThreadRailOpen(false)
     setHighlightMessageId(null)
     setActiveTab('chat')
+    setGroupIntelAction(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
     if (intentHasSession) {
@@ -537,6 +541,42 @@ export default function ChatView({
   const contextBrief = activeContact.contextBriefId ? contextBriefs[activeContact.contextBriefId] : null
   const pinnedTab = contextBrief ? { label: contextBrief.filename } : null
 
+  // Group intelligence: monitoring agents for this chat (ids → contact objects).
+  const monitoringAgentIds = activeContact.monitoringAgents || []
+  const monitoringAgents = monitoringAgentIds.map(id => contacts.find(c => c.id === id)).filter(Boolean)
+
+  const handleTargetedAction = (action) => {
+    if (action.action === 'skip') {
+      setGroupIntelAction('skipped')
+      return
+    }
+    // 'confirm' — Jira responds to the group.
+    setGroupIntelAction('confirmed')
+    const jira = contacts.find(c => c.id === 4)
+    setMainTypingAgentId(activeChatId)
+    setTimeout(() => {
+      setMainTypingAgentId(prev => prev === activeChatId ? null : prev)
+      setExtraMessages(prev => ({
+        ...prev,
+        [activeChatId]: [
+          ...(prev[activeChatId] || []),
+          {
+            id: `gi-response-${Date.now()}`,
+            senderId: 4,
+            text: 'Yes — JIRA-4593 is tracked. Created earlier today, assigned to Kevin Park, P1, due Friday. Kevin has a fix in draft.',
+            link: {
+              source: 'jira',
+              title: 'JIRA-4593 — Guest tenant blank page on expired token re-auth',
+              subtitle: 'In Progress · Kevin Park · P1 · Due Apr 25',
+              url: '#',
+            },
+            time: nowTimeStr(),
+          },
+        ],
+      }))
+    }, 1800)
+  }
+
   return (
     <div className="chat-view">
       <div className="chat-view-main">
@@ -606,7 +646,13 @@ export default function ChatView({
                   Recent context from the conversation has been shared with this session.
                 </div>
               )}
-              {messages.map((msg) => {
+              {messages
+                .filter(msg => {
+                  // Hide the targeted message once the user has acted on it.
+                  if (msg.targetedActions && groupIntelAction !== null) return false
+                  return true
+                })
+                .map((msg) => {
                 const isThreaded = isGroup && msg.replies?.length > 0
                 return (
                   <MessageRow
@@ -622,6 +668,7 @@ export default function ChatView({
                         setThreadRailOpen(true)
                       }
                     } : openJiraThread}
+                    onTargetedAction={msg.targetedActions ? handleTargetedAction : undefined}
                   />
                 )
               })}
@@ -631,10 +678,18 @@ export default function ChatView({
         </div>
         )}
 
+        {monitoringAgents.length > 0 && (
+          <div className="monitoring-indicator">
+            <div className="monitoring-dot" />
+            <span className="monitoring-agents">{monitoringAgents.map(a => a.name).join(' · ')}</span>
+            <span className="monitoring-label">are monitoring this conversation</span>
+          </div>
+        )}
+
         <div className="chat-compose-area">
           {mainTypingAgentId === activeChatId && (
             <TypingIndicator
-              contact={activeContact}
+              contact={contacts.find(c => c.id === 4) || activeContact}
               className="chat-compose-typing"
             />
           )}

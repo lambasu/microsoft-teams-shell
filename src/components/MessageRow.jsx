@@ -133,6 +133,32 @@ function CardChips({ chips }) {
   )
 }
 
+// Classifier badge — shows confidence score, topic, and matched keywords.
+// Appears at the top of a targeted private message from an agent.
+function ClassifierBadge({ classifier }) {
+  const pct = classifier.confidence
+  const barColor = pct >= 80 ? '#107C10' : pct >= 60 ? '#CA5010' : '#888'
+  return (
+    <div className="classifier-badge">
+      <div className="classifier-badge-header">
+        <svg width="12" height="12" viewBox="0 0 20 20" fill="none" className="classifier-icon" aria-hidden="true">
+          <circle cx="10" cy="10" r="8" stroke="currentColor" strokeWidth="1.5"/>
+          <path d="M7 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <span className="classifier-label">Classifier · {classifier.topic}</span>
+        <span className="classifier-confidence" style={{ color: barColor }}>{pct}% match</span>
+      </div>
+      <div className="classifier-bar-track">
+        <div className="classifier-bar-fill" style={{ width: `${pct}%`, background: barColor }} />
+      </div>
+      <div className="classifier-meta">
+        Matched: {classifier.matched.map((w, i) => <span key={i} className="classifier-keyword">"{w}"</span>)}
+        {classifier.context && <span className="classifier-context"> · {classifier.context}</span>}
+      </div>
+    </div>
+  )
+}
+
 function CardBars({ bars }) {
   const max = bars.reduce((acc, b) => Math.max(acc, b.value), 0) || 1
   return (
@@ -202,7 +228,7 @@ function ThreadReplyBadge({ reply, onClick }) {
   )
 }
 
-export default function MessageRow({ message, activeContact, onOpenThread }) {
+export default function MessageRow({ message, activeContact, onOpenThread, onTargetedAction }) {
   if (message.isSystem) {
     return (
       <div className="system-message">
@@ -253,7 +279,8 @@ export default function MessageRow({ message, activeContact, onOpenThread }) {
         </div>
         <div className={`message-bubble ${message.isPrivate ? 'message-bubble-private' : ''}`}>
           <MessageActions onReact={toggleReaction} />
-          {message.isPrivate && <PrivateDisclaimer />}
+          {message.isPrivate && !message.classifier && <PrivateDisclaimer />}
+          {message.classifier && <ClassifierBadge classifier={message.classifier} />}
           {message.forwardedFrom && (
             <div className="forwarded-message">
               <div className="forwarded-sender">{message.forwardedFrom.sender}</div>
@@ -266,6 +293,19 @@ export default function MessageRow({ message, activeContact, onOpenThread }) {
                 typeof part === 'string' ? part : <span key={i} className="mention">{part.name}</span>
               )
             : message.text}
+          {message.targetedActions && (
+            <div className="targeted-actions">
+              {message.targetedActions.map((action, i) => (
+                <button
+                  key={i}
+                  className={`targeted-action-btn${action.action === 'confirm' ? ' targeted-action-btn-primary' : ' targeted-action-btn-secondary'}`}
+                  onClick={() => onTargetedAction?.(action)}
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>
+          )}
           {message.link && <LinkCard link={message.link} />}
           {message.cards && (
             <div className="message-cards">

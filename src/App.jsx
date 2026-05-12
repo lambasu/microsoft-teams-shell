@@ -10,8 +10,8 @@ import './App.css'
 
 export default function App() {
   const [activeView, setActiveView] = useState('chat') // 'chat' | 'activity'
-  const [activeChatId, setActiveChatId] = useState(23)
-  const [readChatIds, setReadChatIds] = useState(() => new Set([23]))
+  const [activeChatId, setActiveChatId] = useState(35)
+  const [readChatIds, setReadChatIds] = useState(() => new Set([35]))
   const [sessions, setSessions] = useState(initialSessions)
   const [dynamicSessionMessages, setDynamicSessionMessages] = useState({})
   // Activity feed: persist which events the user has opened so unread decorations clear.
@@ -115,49 +115,51 @@ export default function App() {
       </div>
       {showFre && (
         <FreModal
-          title="Day-one agent onboarding"
-          subtitle="An agent added to a group chat already knows who's in the room, what they're working on, and what it can do — before anyone says a word."
+          title="Group intelligence for Teams agents"
+          subtitle="Agents monitor group conversations and decide when to engage — without waiting to be @mentioned."
           onDismiss={dismissFre}
         >
           <h3 className="fre-section-title">Today</h3>
           <p>
-            When you add an agent to a group chat, the first thing you have to
-            do is brief it. Who's on the team. What the project is. What tools
-            you use. What decisions have already been made. It's a tax the team
-            pays every time — and it scales badly as chats get longer and
-            teams get larger.
+            Agents in Teams only respond when explicitly @mentioned. In a
+            real standup or sprint sync, the right information often surfaces
+            mid-conversation — not because someone called for it, but because
+            context made it relevant. Requiring an @mention means value gets
+            missed every time someone forgets to invoke the right agent.
           </p>
 
           <h3 className="fre-section-title">Problem</h3>
           <p>
-            Agents are context-blind on arrival. They can be capable once
-            grounded, but grounding them is manual, inconsistent, and
-            invisible to everyone else in the chat. The agent that arrives
-            asking "how can I help?" puts the burden on the team to narrate
-            work that's already been done.
+            Teams with multiple agents create a coordination burden: users
+            must remember which agent owns which domain, and manually invoke
+            each one at the right moment. Agents are passive by default —
+            capable only when called.
           </p>
 
           <h3 className="fre-section-title">Solution</h3>
           <p>
-            When an agent joins a group chat, it reads the thread first. It
-            surfaces what it learned — stakeholders and their roles, tools
-            already in use, files shared, open decisions — in a single
-            structured welcome message. Every action it proposes is grounded
-            in the actual work happening in the chat, not a generic prompt.
+            A classifier-driven decision layer runs continuously on group chat
+            messages. Each agent registers its own topic scope. When a message
+            arrives, the classifier scores it for relevance — no LLM required.
+            High confidence: agent responds directly. "Maybe" band: agent sends
+            a <strong>targeted message</strong> (visible only to the relevant
+            user) asking for confirmation before engaging the group.
           </p>
           <p>
-            Open the <strong>Northwind launch</strong> chat in the left panel.
-            Scroll to the bottom: Claude was just added and sent its first
-            message — already knowing the team, the tools, and the one
-            launch-blocking ticket that needs attention right now.
+            Open the <strong>Northwind sprint sync</strong> chat. Scroll to the
+            bottom: Olivia @mentioned Jira earlier to create a ticket. A few
+            messages later, James asks about the bug without any @mention. Jira's
+            classifier detected the relevance — confidence 82% — and sent James
+            a private targeted message asking whether to respond to the group.
           </p>
 
           <h3 className="fre-section-title">What this unlocks</h3>
           <p>
-            Zero-briefing agent adoption. The team doesn't stop their work to
-            onboard a new tool — the tool onboards itself. And because the
-            agent's first message shows its reasoning, the team can verify
-            what it knows before trusting what it does.
+            Agents become ambient collaborators that surface help at the right
+            moment without spamming or requiring user-initiated prompts. The
+            targeted message pattern gives users control over when the agent
+            engages — graceful uncertainty handling that keeps the experience
+            from feeling intrusive.
           </p>
         </FreModal>
       )}
