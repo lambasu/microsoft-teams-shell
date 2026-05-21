@@ -10,7 +10,13 @@ import { FreModal } from './components/common'
 import './App.css'
 
 // Map prototype id → initial chat id
-const PROTOTYPE_CHAT = { p1: 23, p2: 34, p3: 35, p4: 38, p5: 39 }
+const PROTOTYPE_CHAT = {
+  'day-one-agent-onboarding': 23,
+  'context-brief-as-pinned-tab': 34,
+  'group-intelligence': 35,
+  'earned-handoff-to-agency': 38,
+  'facilitator-coordinates-agency': 39,
+}
 
 export default function App() {
   // True when the user arrived via a ?prototype= deep link — hides the back-to-gallery button.
@@ -159,7 +165,7 @@ export default function App() {
           clearNavIntent={clearNavIntent}
         />
       </div>
-      {showFre && selectedPrototype === 'p1' && (
+      {showFre && selectedPrototype === 'day-one-agent-onboarding' && (
         <FreModal
           title="Day-one agent onboarding"
           subtitle="Agent joins a group chat and instantly knows who's in the room — no user grounding required."
@@ -191,7 +197,7 @@ export default function App() {
           </p>
         </FreModal>
       )}
-      {showFre && selectedPrototype === 'p2' && (
+      {showFre && selectedPrototype === 'context-brief-as-pinned-tab' && (
         <FreModal
           title="Context brief as a pinned tab"
           subtitle="Agent synthesizes the chat into a living document and pins it where the team can always find it."
@@ -221,7 +227,7 @@ export default function App() {
           </p>
         </FreModal>
       )}
-      {showFre && selectedPrototype === 'p3' && (
+      {showFre && selectedPrototype === 'group-intelligence' && (
         <FreModal
           title="Group intelligence for Teams agents"
           subtitle="Agents monitor group conversations and decide when to engage — without waiting to be @mentioned."
@@ -271,7 +277,7 @@ export default function App() {
           </p>
         </FreModal>
       )}
-      {showFre && selectedPrototype === 'p4' && (
+      {showFre && selectedPrototype === 'earned-handoff-to-agency' && (
         <FreModal
           title="Earned handoff to Agency"
           subtitle="Facilitator handles lightweight work in Teams — then hands off deep tasks to Agency with full context intact."
@@ -304,7 +310,7 @@ export default function App() {
           </p>
         </FreModal>
       )}
-      {showFre && selectedPrototype === 'p5' && (
+      {showFre && selectedPrototype === 'facilitator-coordinates-agency' && (
         <FreModal
           title="Facilitator coordinates Agency"
           subtitle="A bug is assigned in ADO, the team discusses it, and one @mention triggers Facilitator to route the fix to Agency — with full context."

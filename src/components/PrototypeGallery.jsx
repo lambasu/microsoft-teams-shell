@@ -2,7 +2,7 @@ import './PrototypeGallery.css'
 
 const PROTOTYPES = [
   {
-    id: 'p1',
+    id: 'day-one-agent-onboarding',
     number: '01',
     title: 'Day-one agent onboarding',
     description:
@@ -12,7 +12,7 @@ const PROTOTYPES = [
     tagColor: '#0078D4',
   },
   {
-    id: 'p2',
+    id: 'context-brief-as-pinned-tab',
     number: '02',
     title: 'Context brief as pinned tab',
     description:
@@ -22,7 +22,7 @@ const PROTOTYPES = [
     tagColor: '#038387',
   },
   {
-    id: 'p3',
+    id: 'group-intelligence',
     number: '03',
     title: 'Group intelligence',
     description:
@@ -32,7 +32,7 @@ const PROTOTYPES = [
     tagColor: '#5B5FC7',
   },
   {
-    id: 'p4',
+    id: 'earned-handoff-to-agency',
     number: '04',
     title: 'Earned handoff to Agency',
     description:
@@ -42,7 +42,7 @@ const PROTOTYPES = [
     tagColor: '#5B5FC7',
   },
   {
-    id: 'p5',
+    id: 'facilitator-coordinates-agency',
     number: '05',
     title: 'Facilitator coordinates Agency',
     description:
