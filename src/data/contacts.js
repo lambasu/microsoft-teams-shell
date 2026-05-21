@@ -51,6 +51,10 @@ export const contacts = [
   { id: 33, name: 'AC Test', initials: 'AC', color: '#5B5FC7', status: null, isGroup: true, memberCount: 5 },
   { id: 34, name: 'Northwind launch', initials: 'NL', color: '#0078D4', status: null, isGroup: true, memberCount: 7, contextBriefId: 34 },
   { id: 35, name: 'Northwind sprint sync', initials: 'NS', color: '#038387', status: null, isGroup: true, memberCount: 6, monitoringAgents: [4, 2] },
+  { id: 36, name: 'Agency', initials: 'Ag', color: '#5B5FC7', status: null, isAgent: true, description: 'Agentic coding workflows — task, code, PR, review, deploy' },
+  { id: 37, name: 'Facilitator', initials: 'Fa', color: '#038387', status: null, isAgent: true, description: 'Group conversation coordinator and handoff facilitator' },
+  { id: 38, name: 'JIRA-4593 hotfix', initials: 'JH', color: '#CA5010', status: null, isGroup: true, memberCount: 3 },
+  { id: 39, name: 'Platform daily sync', initials: 'PD', color: '#038387', status: null, isGroup: true, memberCount: 5 },
 ]
 
 // Teams the user belongs to. Each team has a list of channels (by contact id,
@@ -102,6 +106,8 @@ export const projectNorthwind = [
   { contactId: 23, bold: true },
   { contactId: 34, bold: true },
   { contactId: 35, bold: true },
+  { contactId: 38, bold: true },
+  { contactId: 39, bold: true },
   { contactId: 24 },
 ]
 

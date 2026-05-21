@@ -117,14 +117,18 @@ export default function ChatView({
   const [jiraGroupSessionId, setJiraGroupSessionId] = useState(null)
   const [activeSessionId, setActiveSessionId] = useState(null)
   const [jiraThreadAnchorId, setJiraThreadAnchorId] = useState(null)
-  const [mainTypingAgentId, setMainTypingAgentId] = useState(null)
+  // mainTyping tracks which chat is showing a typing indicator and which
+  // contact avatar to display. Shape: { chatId, contactId } | null
+  const [mainTyping, setMainTyping] = useState(null)
   const [channelThreadPostId, setChannelThreadPostId] = useState(null)
   const [threadRailOpen, setThreadRailOpen] = useState(false)
   const [highlightMessageId, setHighlightMessageId] = useState(null)
   const [activeTab, setActiveTab] = useState('chat')
-  // Group intelligence demo flow (chat 35): track whether the targeted
-  // message has been acted on so we can replace it with the group response.
+  // Track whether targeted messages have been acted on (hide them once actioned).
+  // P3 (chat 35): group intelligence / Jira confirm.
+  // P5 (chat 39): Facilitator → Agency PR coordination.
   const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
+  const [p5Action, setP5Action] = useState(null) // null | 'confirmed' | 'skipped'
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -148,6 +152,8 @@ export default function ChatView({
     setHighlightMessageId(null)
     setActiveTab('chat')
     setGroupIntelAction(null)
+    setP5Action(null)
+    setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
     if (intentHasSession) {
@@ -201,7 +207,7 @@ export default function ChatView({
       return
     }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [extraMessages, activeChatId, activeSessionId, mainTypingAgentId, highlightMessageId])
+  }, [extraMessages, activeChatId, activeSessionId, mainTyping, highlightMessageId])
 
   // Mirror the rail's Jira thread messages back into the source chat's
   // session so the conversation is discoverable from Jira's sessions list.
@@ -486,9 +492,9 @@ export default function ChatView({
     // Sarah Chen (id 1) scripted auto-response — exercises the typing
     // indicator flow end-to-end from a regular 1:1 chat.
     if (chatId === 1) {
-      setMainTypingAgentId(chatId)
+      setMainTyping({ chatId, contactId: chatId })
       setTimeout(() => {
-        setMainTypingAgentId((prev) => (prev === chatId ? null : prev))
+        setMainTyping((prev) => (prev?.chatId === chatId ? null : prev))
         setExtraMessages((prev) => ({
           ...prev,
           [bucket]: [...(prev[bucket] || []), {
@@ -518,10 +524,10 @@ export default function ChatView({
     finalizePendingSession(suggestion.text, suggestion.title)
 
     // Typing indicator then the prepared response.
-    setMainTypingAgentId(chatId)
+    setMainTyping({ chatId, contactId: chatId })
     const delay = 2000 + Math.floor(Math.random() * 1000)
     setTimeout(() => {
-      setMainTypingAgentId((prev) => (prev === chatId ? null : prev))
+      setMainTyping((prev) => (prev?.chatId === chatId ? null : prev))
       const agentMessage = {
         id: `extra-${Date.now()}-r`,
         senderId: chatId,
@@ -536,7 +542,7 @@ export default function ChatView({
   }
 
   const agentSuggestions = isAgent ? promptSuggestions[activeChatId] : null
-  const showPromptSuggestions = !!agentSuggestions && messages.length === 0 && mainTypingAgentId !== activeChatId
+  const showPromptSuggestions = !!agentSuggestions && messages.length === 0 && mainTyping?.chatId !== activeChatId
 
   const contextBrief = activeContact.contextBriefId ? contextBriefs[activeContact.contextBriefId] : null
   const pinnedTab = contextBrief ? { label: contextBrief.filename } : null
@@ -546,35 +552,158 @@ export default function ChatView({
   const monitoringAgents = monitoringAgentIds.map(id => contacts.find(c => c.id === id)).filter(Boolean)
 
   const handleTargetedAction = (action) => {
+    const chatId = activeChatId
+
     if (action.action === 'skip') {
-      setGroupIntelAction('skipped')
+      if (chatId === 35) setGroupIntelAction('skipped')
+      else setP5Action('skipped')
       return
     }
-    // 'confirm' — Jira responds to the group.
-    setGroupIntelAction('confirmed')
-    const jira = contacts.find(c => c.id === 4)
-    setMainTypingAgentId(activeChatId)
-    setTimeout(() => {
-      setMainTypingAgentId(prev => prev === activeChatId ? null : prev)
+
+    // 'confirm' — P3: Jira responds to the Northwind sprint sync group.
+    if (action.action === 'confirm') {
+      setGroupIntelAction('confirmed')
+      setMainTyping({ chatId, contactId: 4 })
+      setTimeout(() => {
+        setMainTyping(prev => prev?.chatId === chatId ? null : prev)
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [
+            ...(prev[chatId] || []),
+            {
+              id: `gi-response-${Date.now()}`,
+              senderId: 4,
+              text: 'Yes — JIRA-4593 is tracked. Created earlier today, assigned to Kevin Park, P1, due Friday. Kevin has a fix in draft.',
+              link: {
+                source: 'jira',
+                title: 'JIRA-4593 — Guest tenant blank page on expired token re-auth',
+                subtitle: 'In Progress · Kevin Park · P1 · Due Apr 25',
+                url: '#',
+              },
+              time: nowTimeStr(),
+            },
+          ],
+        }))
+      }, 1800)
+      return
+    }
+
+    // 'ask_agency' — P5: Facilitator routes to Agency, then posts the fix card.
+    if (action.action === 'ask_agency') {
+      setP5Action('confirmed')
+      const nowStr = nowTimeStr()
+      // Facilitator posts a coordination message to the group.
       setExtraMessages(prev => ({
         ...prev,
-        [activeChatId]: [
-          ...(prev[activeChatId] || []),
+        [chatId]: [
+          ...(prev[chatId] || []),
           {
-            id: `gi-response-${Date.now()}`,
-            senderId: 4,
-            text: 'Yes — JIRA-4593 is tracked. Created earlier today, assigned to Kevin Park, P1, due Friday. Kevin has a fix in draft.',
-            link: {
-              source: 'jira',
-              title: 'JIRA-4593 — Guest tenant blank page on expired token re-auth',
-              subtitle: 'In Progress · Kevin Park · P1 · Due Apr 25',
-              url: '#',
-            },
-            time: nowTimeStr(),
+            id: `fac-coord-${Date.now()}`,
+            senderId: 37,
+            text: 'Passing JIRA-4593 to Agency with the thread context and ADO item details.',
+            time: nowStr,
           },
         ],
       }))
-    }, 1800)
+      // After a short delay, Facilitator posts Agency's fix card.
+      setTimeout(() => {
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [
+            ...(prev[chatId] || []),
+            {
+              id: `fac-fix-${Date.now()}`,
+              senderId: 37,
+              text: 'Agency has a fix ready.',
+              cards: [
+                {
+                  accentColor: '#238636',
+                  title: 'JIRA-4593 — Guest tenant blank page on expired token re-auth',
+                  subtitle: 'auth/guest.ts · 2 files changed · +12 −0',
+                  badge: { text: 'PR Ready', tone: 'green' },
+                  sections: [
+                    {
+                      heading: 'Root cause',
+                      text: '`validateGuestToken()` doesn\'t check claim format before the expiry assertion. Mismatched guest claims are swallowed — page renders blank instead of prompting re-auth.',
+                    },
+                    {
+                      heading: 'auth/guest.ts',
+                      diff: [
+                        { type: ' ', text: '  // Validate token claims before expiry check' },
+                        { type: '+', text: '  const fmt = detectClaimFormat(guestClaims)' },
+                        { type: '+', text: '  if (fmt !== hostClaimFormat) {' },
+                        { type: '+', text: '    return promptReAuth({ reason: \'GuestClaimMismatch\' })' },
+                        { type: '+', text: '  }' },
+                        { type: ' ', text: '  if (isExpired(guestToken)) {' },
+                        { type: ' ', text: '    return promptReAuth({ reason: \'TokenExpired\' })' },
+                        { type: ' ', text: '  }' },
+                      ],
+                    },
+                    {
+                      heading: 'tests/guest-auth.test.ts',
+                      diff: [
+                        { type: '+', text: '  it(\'expired + mismatched claims → re-auth fires\', () => {' },
+                        { type: '+', text: '    const result = validateGuestToken(expiredToken, mismatchedClaims)' },
+                        { type: '+', text: '    expect(result.action).toBe(\'reauth\')' },
+                        { type: '+', text: '  })' },
+                      ],
+                    },
+                  ],
+                  footer: 'Fix by Agency · JIRA-4593 · ' + nowTimeStr(),
+                  actions: [{ label: 'View PR on GitHub', primary: true }, 'Dismiss'],
+                },
+              ],
+              time: nowTimeStr(),
+            },
+          ],
+        }))
+      }, 2400)
+      return
+    }
+  }
+
+  // P4: "Open this in Agency" card action — create a pre-seeded Agency session
+  // and navigate there with the fix plan already loaded.
+  const handleCardAction = ({ type }) => {
+    if (type !== 'open_in_agency') return
+    const nowStr = nowTimeStr()
+    const sessionId = `s36-hotfix-${Date.now()}`
+    const seedMessages = [
+      {
+        id: `ag-u-${Date.now()}`,
+        senderId: 'me',
+        text: 'Can you draft the fix and open a PR for JIRA-4593?',
+        time: nowStr,
+      },
+      {
+        id: `ag-r-${Date.now()}`,
+        senderId: 36,
+        text: 'On it. I\'ve reviewed the group thread and traced the issue in the codebase.',
+        cards: [
+          {
+            accentColor: '#5B5FC7',
+            title: 'Fix plan — JIRA-4593',
+            subtitle: 'auth/guest.ts · 22-line change + 1 new test',
+            steps: [
+              { text: 'Add claim format check at auth/guest.ts:84 — before token expiry assertion', status: 'done' },
+              { text: 'Route GuestClaimMismatch to re-auth prompt — mirrors auth/host.ts:61', status: 'done' },
+              { text: 'New test: expired token + mismatched claims → re-auth prompt fires', status: 'done' },
+            ],
+            footer: 'Agency · JIRA-4593 · ' + nowStr,
+            actions: ['Open PR', 'Review changes'],
+          },
+        ],
+        time: nowStr,
+      },
+    ]
+    addSession(36, {
+      id: sessionId,
+      name: 'JIRA-4593 fix — guest token re-auth',
+      time: new Date().toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }),
+      preview: 'Fix plan ready · auth/guest.ts · 22 lines',
+      sourceChatId: activeChatId,
+    }, seedMessages)
+    onSelectChat(36, { showSessions: true, sessionId })
   }
 
   return (
@@ -649,7 +778,8 @@ export default function ChatView({
               {messages
                 .filter(msg => {
                   // Hide the targeted message once the user has acted on it.
-                  if (msg.targetedActions && groupIntelAction !== null) return false
+                  if (msg.targetedActions && activeChatId === 35 && groupIntelAction !== null) return false
+                  if (msg.targetedActions && activeChatId === 39 && p5Action !== null) return false
                   return true
                 })
                 .map((msg) => {
@@ -669,6 +799,7 @@ export default function ChatView({
                       }
                     } : openJiraThread}
                     onTargetedAction={msg.targetedActions ? handleTargetedAction : undefined}
+                    onCardAction={handleCardAction}
                   />
                 )
               })}
@@ -682,14 +813,14 @@ export default function ChatView({
           <div className="monitoring-indicator">
             <div className="monitoring-dot" />
             <span className="monitoring-agents">{monitoringAgents.map(a => a.name).join(' · ')}</span>
-            <span className="monitoring-label">are monitoring this conversation</span>
+            <span className="monitoring-label">{monitoringAgents.length === 1 ? 'is' : 'are'} monitoring this conversation</span>
           </div>
         )}
 
         <div className="chat-compose-area">
-          {mainTypingAgentId === activeChatId && (
+          {mainTyping?.chatId === activeChatId && (
             <TypingIndicator
-              contact={contacts.find(c => c.id === 4) || activeContact}
+              contact={contacts.find(c => c.id === mainTyping.contactId) || activeContact}
               className="chat-compose-typing"
             />
           )}

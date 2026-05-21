@@ -1,0 +1,145 @@
+.proto-gallery {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #F5F5F5;
+  padding: 40px 24px;
+  overflow-y: auto;
+  gap: 40px;
+}
+
+.proto-gallery-header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.proto-gallery-wordmark {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5B5FC7;
+  letter-spacing: 0.01em;
+}
+
+.proto-gallery-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #242424;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.proto-gallery-subtitle {
+  font-size: 14px;
+  color: #616161;
+  margin: 0;
+  max-width: 480px;
+  line-height: 1.5;
+}
+
+.proto-gallery-grid {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 960px;
+  width: 100%;
+}
+
+.proto-card {
+  background: #fff;
+  border: 1px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 24px;
+  width: 280px;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.proto-card:hover {
+  border-color: #5B5FC7;
+  box-shadow: 0 4px 16px rgba(91, 95, 199, 0.12);
+  transform: translateY(-2px);
+}
+
+.proto-card-number {
+  font-size: 11px;
+  font-weight: 700;
+  color: #BDBDBD;
+  letter-spacing: 0.08em;
+}
+
+.proto-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.proto-card-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 10px;
+  letter-spacing: 0.02em;
+  width: fit-content;
+}
+
+.proto-card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #242424;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.proto-card-desc {
+  font-size: 13px;
+  color: #616161;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.proto-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid #F0F0F0;
+}
+
+.proto-card-chat {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: #999;
+}
+
+.proto-card-launch {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5B5FC7;
+}
+
+.proto-gallery-footer {
+  font-size: 11px;
+  color: #BDBDBD;
+  text-align: center;
+}

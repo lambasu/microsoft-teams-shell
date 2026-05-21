@@ -1353,4 +1353,108 @@ export const messagesByContact = {
     { id: 15, senderId: 17, text: 'Nice. Also filed JIRA-4596 — requesting the keyboard shortcut tooltip. Minor, post-launch.', time: 'Today 1:40 PM' },
     { id: 16, senderId: 'me', text: 'Appreciate the triage hustle this week. The dogfood channel has been the MVP of launch prep.', time: 'Today 3:30 PM', reactions: [{ emoji: '🙌', count: 5 }, { emoji: '🚀', count: 2 }] },
   ],
+
+  // ── JIRA-4593 hotfix group — earned handoff prototype (contact 38) ─────
+  // Scenario: Alex asks whether Agency can help draft the fix. Facilitator
+  // (monitoring the chat) processes the request, surfaces an analysis card
+  // attributed to Agency, and offers a one-click handoff into a live session.
+  38: [
+    { id: 1, senderId: 3, text: 'confirmed the blank-page repro again. guest tenant, expired token path. repro\'d 3 times on both iOS Safari and Chrome Android.', time: 'Today 9:12 AM' },
+    { id: 2, senderId: 15, text: 'i\'ve got the auth middleware narrowed down — the re-auth prompt call isn\'t firing for guest claims. tracing through the token refresh pipeline to confirm the exact line.', time: 'Today 9:14 AM' },
+    { id: 3, senderId: 'me', text: 'Kevin, what\'s your ETA on a fix? this is our only remaining launch blocker.', time: 'Today 9:16 AM' },
+    { id: 4, senderId: 15, text: 'couple hours minimum. need to trace `validateGuestToken()` end-to-end before I touch anything.', time: 'Today 9:18 AM' },
+    { id: 5, senderId: 'me', text: 'would Agency be able to help draft the fix? want to move faster on this', time: 'Today 9:19 AM' },
+    // Facilitator (id 37) responds publicly with Agency's analysis card.
+    // The "Open this in Agency" action button is an object with type: 'open_in_agency'
+    // so MessageRow fires the onCardAction handler in ChatView.
+    {
+      id: 6,
+      senderId: 37,
+      text: 'I looked into this. Agency traced the issue and has a fix plan ready.',
+      cards: [
+        {
+          accentColor: '#5B5FC7',
+          title: 'Agency — JIRA-4593 analysis',
+          subtitle: 'Guest tenant blank page on expired token re-auth',
+          sections: [
+            {
+              heading: 'Root cause',
+              text: '`validateGuestToken()` in auth/guest.ts doesn\'t fall back to the re-auth prompt when the token claim format differs from the host tenant schema. The mismatch is swallowed — the page renders blank instead of prompting.',
+            },
+            {
+              heading: 'Proposed fix',
+              bullets: [
+                'Add a claim format check before the token expiry assertion at auth/guest.ts:84',
+                'Route GuestClaimMismatch to the re-auth prompt — mirrors the existing fallback in auth/host.ts:61',
+                'New test case: expired token + mismatched claim format → re-auth prompt fires',
+              ],
+            },
+            {
+              heading: 'Files to change',
+              chips: ['auth/guest.ts', 'auth/token-validator.ts', 'tests/guest-auth.test.ts'],
+            },
+          ],
+          footer: 'Analysis by Agency · Today 9:20 AM',
+          actions: [{ label: 'Open this in Agency', type: 'open_in_agency', primary: true }, 'Dismiss'],
+        },
+      ],
+      time: 'Today 9:20 AM',
+    },
+    { id: 7, senderId: 15, text: 'that root cause matches exactly what i was seeing. the claim format check is the missing piece.', time: 'Today 9:21 AM', reactions: [{ emoji: '👀', count: 1 }] },
+  ],
+
+  // ── Platform daily sync — group coordination prototype (contact 39) ────
+  // Scenario: Team discusses JIRA-4593 fix in their morning sync. Kevin has
+  // a fix drafted but the PR isn't open yet. Facilitator (monitoring) sends a
+  // private targeted message offering to ask Agency to open the PR.
+  39: [
+    // Bug surfaces in the daily sync — natural discovery, no system prompt.
+    { id: 1, senderId: 7, text: 'heads up — guest tenant users are hitting a blank page when their session token expires mid-meeting. can\'t repro on host accounts.', time: 'Today 8:52 AM' },
+    { id: 2, senderId: 15, text: 'pretty sure it\'s `validateGuestToken()` — that function doesn\'t handle the case where the guest claim format doesn\'t match the host schema. the mismatch gets swallowed instead of triggering re-auth.', time: 'Today 8:54 AM' },
+    { id: 3, senderId: 3, text: 'confirmed — reproducible on iOS Safari and Chrome Android. token expiry during an active meeting is the trigger.', time: 'Today 8:56 AM' },
+    // Rachel logs the bug in ADO and assigns it to Alex (the current user).
+    // The card is an unfurled ADO work item.
+    {
+      id: 4,
+      senderId: 12,
+      text: 'logged it and assigned to you, Alex',
+      cards: [
+        {
+          accentColor: '#0078D4',
+          iconType: 'ado',
+          title: 'JIRA-4593 — Guest tenant blank page on expired token re-auth',
+          badge: { text: 'Bug', tone: 'amber' },
+          subtitle: 'northwind/agent-handoff · Active · P1',
+          facts: [
+            { label: 'Assigned To', value: 'Alex Morgan' },
+            { label: 'Priority', value: '1 — Critical' },
+            { label: 'Area', value: 'Auth / Guest' },
+            { label: 'Iteration', value: 'Sprint 14' },
+          ],
+          footer: 'Azure DevOps',
+        },
+      ],
+      time: 'Today 8:58 AM',
+    },
+    // Alex (@me) asks Facilitator to take it.
+    { id: 5, senderId: 'me', text: [{ name: '@Facilitator' }, ' can you take this and work on a fix?'], time: 'Today 9:01 AM' },
+    // Facilitator sends a private targeted message asking to confirm routing to Agency.
+    {
+      id: 6,
+      senderId: 37,
+      isPrivate: true,
+      classifier: {
+        confidence: 91,
+        topic: 'Fix request',
+        matched: ['fix', 'JIRA-4593', '@Facilitator'],
+        context: 'Alex asked Facilitator to work on JIRA-4593',
+      },
+      text: 'I can route JIRA-4593 to Agency with the full context — the thread discussion and ADO item details — so it can draft and open a fix. Want me to kick it off?',
+      targetedActions: [
+        { label: 'Yes, pass to Agency', action: 'ask_agency' },
+        { label: 'Not now', action: 'skip' },
+      ],
+      time: 'Today 9:01 AM',
+    },
+  ],
 }

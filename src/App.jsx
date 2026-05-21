@@ -10,13 +10,28 @@ import { FreModal } from './components/common'
 import './App.css'
 
 // Map prototype id → initial chat id
-const PROTOTYPE_CHAT = { p1: 23, p2: 34, p3: 35 }
+const PROTOTYPE_CHAT = { p1: 23, p2: 34, p3: 35, p4: 38, p5: 39 }
 
 export default function App() {
-  const [selectedPrototype, setSelectedPrototype] = useState(null) // null = gallery
+  // True when the user arrived via a ?prototype= deep link — hides the back-to-gallery button.
+  const [isDeepLinked] = useState(() => {
+    const p = new URLSearchParams(window.location.search).get('prototype')
+    return !!PROTOTYPE_CHAT[p]
+  })
+  const [selectedPrototype, setSelectedPrototype] = useState(() => {
+    const p = new URLSearchParams(window.location.search).get('prototype')
+    return PROTOTYPE_CHAT[p] ? p : null
+  })
   const [activeView, setActiveView] = useState('chat') // 'chat' | 'activity'
-  const [activeChatId, setActiveChatId] = useState(35)
-  const [readChatIds, setReadChatIds] = useState(() => new Set([35]))
+  const [activeChatId, setActiveChatId] = useState(() => {
+    const p = new URLSearchParams(window.location.search).get('prototype')
+    return PROTOTYPE_CHAT[p] || 35
+  })
+  const [readChatIds, setReadChatIds] = useState(() => {
+    const p = new URLSearchParams(window.location.search).get('prototype')
+    const chatId = PROTOTYPE_CHAT[p] || 35
+    return new Set([chatId])
+  })
   const [sessions, setSessions] = useState(initialSessions)
   const [dynamicSessionMessages, setDynamicSessionMessages] = useState({})
   // Activity feed: persist which events the user has opened so unread decorations clear.
@@ -112,7 +127,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <TitleBar onBack={backToGallery} onShowFre={() => setShowFre(true)} />
+      <TitleBar onBack={isDeepLinked ? undefined : backToGallery} onShowFre={() => setShowFre(true)} />
       <div className="app-body">
         <NavRail
           activeView={activeView}
@@ -253,6 +268,64 @@ export default function App() {
             targeted message pattern gives users control over when the agent
             engages — graceful uncertainty handling that keeps the experience
             from feeling intrusive.
+          </p>
+        </FreModal>
+      )}
+      {showFre && selectedPrototype === 'p4' && (
+        <FreModal
+          title="Earned handoff to Agency"
+          subtitle="Facilitator handles lightweight work in Teams — then hands off deep tasks to Agency with full context intact."
+          onDismiss={dismissFre}
+        >
+          <h3 className="fre-section-title">The problem</h3>
+          <p>
+            When a group identifies work that needs doing — a bug fix, a PR,
+            a code change — someone has to manually copy the context into a
+            separate tool or re-brief an agent from scratch. The handoff is
+            lossy and slow.
+          </p>
+
+          <h3 className="fre-section-title">The idea</h3>
+          <p>
+            Facilitator monitors the group conversation and detects when a
+            request can be routed to Agency. It analyzes the ask, surfaces a
+            structured result — attributed to Agency — and offers a single
+            button to open a live Agency session. The session is pre-loaded
+            with full context from the group thread. No re-briefing.
+          </p>
+
+          <h3 className="fre-section-title">What to look for</h3>
+          <p>
+            Open the <strong>JIRA-4593 hotfix</strong> chat. Scroll to the
+            bottom where Facilitator surfaces Agency's analysis card: root
+            cause, proposed fix, and files to change. Click{' '}
+            <strong>Open this in Agency</strong> — you'll land in a new Agency
+            session with the fix plan already loaded and ready to act on.
+          </p>
+        </FreModal>
+      )}
+      {showFre && selectedPrototype === 'p5' && (
+        <FreModal
+          title="Facilitator coordinates Agency"
+          subtitle="A bug is assigned in ADO, the team discusses it, and one @mention triggers Facilitator to route the fix to Agency — with full context."
+          onDismiss={dismissFre}
+        >
+          <h3 className="fre-section-title">The flow</h3>
+          <p>
+            A bug is created in ADO and assigned to Kevin. The team discusses
+            it in the group chat. Rachel @mentions Facilitator asking for a
+            fix. Facilitator sends a <strong>private targeted message</strong>{' '}
+            asking whether to hand the task off to Agency — passing the full
+            thread discussion and ADO item details along with it.
+          </p>
+
+          <h3 className="fre-section-title">What to look for</h3>
+          <p>
+            Open the <strong>Platform daily sync</strong> chat. Scroll to the
+            bottom where Facilitator's private message appears. Click{' '}
+            <strong>Yes, pass to Agency</strong> — Facilitator routes the
+            context to Agency, then posts back a fix card with the code diff
+            and a <strong>View PR on GitHub</strong> button.
           </p>
         </FreModal>
       )}
