@@ -229,7 +229,7 @@ function ThreadReplyBadge({ reply, onClick }) {
   )
 }
 
-export default function MessageRow({ message, activeContact, onOpenThread, onTargetedAction, onCardAction }) {
+export default function MessageRow({ message, activeContact, onOpenThread, onTargetedAction, onCardAction, onReact }) {
   if (message.isSystem) {
     return (
       <div className="system-message">
@@ -256,8 +256,9 @@ export default function MessageRow({ message, activeContact, onOpenThread, onTar
   const toggleReaction = (emoji) => {
     setMyReactions(prev => {
       const next = new Set(prev)
-      if (next.has(emoji)) next.delete(emoji)
-      else next.add(emoji)
+      const isAdding = !next.has(emoji)
+      if (isAdding) next.add(emoji); else next.delete(emoji)
+      if (isAdding) onReact?.(message.id, emoji)
       return next
     })
   }

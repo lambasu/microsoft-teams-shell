@@ -2,11 +2,20 @@ import { currentUser } from '../data/contacts'
 import { Avatar, ChevronLeft, ChevronRight, Info } from './common'
 import './TitleBar.css'
 
-export default function TitleBar({ onShowFre }) {
+export default function TitleBar({ onShowFre, onBack }) {
   return (
     <div className="title-bar">
       <div className="title-bar-left">
-        {onShowFre && (
+        {onBack ? (
+          <button
+            className="title-btn title-btn-back"
+            aria-label="Back to prototypes"
+            onClick={onBack}
+          >
+            <ChevronLeft size={16} />
+            <span className="title-btn-back-label">Prototypes</span>
+          </button>
+        ) : onShowFre ? (
           <button
             className="title-btn"
             aria-label="Show welcome info"
@@ -14,7 +23,7 @@ export default function TitleBar({ onShowFre }) {
           >
             <Info size={16} />
           </button>
-        )}
+        ) : null}
       </div>
 
       <div className="title-bar-center">

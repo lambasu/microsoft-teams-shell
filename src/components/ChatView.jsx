@@ -129,6 +129,7 @@ export default function ChatView({
   // P5 (chat 39): Facilitator → Agency PR coordination.
   const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
   const [p5Action, setP5Action] = useState(null) // null | 'confirmed' | 'skipped'
+  const [p6State, setP6State] = useState(null) // null | 'prompted' | 'workflows' | 'agency'
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -153,6 +154,7 @@ export default function ChatView({
     setActiveTab('chat')
     setGroupIntelAction(null)
     setP5Action(null)
+    setP6State(null)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -551,6 +553,29 @@ export default function ChatView({
   const monitoringAgentIds = activeContact.monitoringAgents || []
   const monitoringAgents = monitoringAgentIds.map(id => contacts.find(c => c.id === id)).filter(Boolean)
 
+  // P6: fires when user reacts to a message in chat 40 with 🐛.
+  const handleP6React = (messageId, emoji) => {
+    if (emoji !== '🐛' || p6State !== null) return
+    setP6State('prompted')
+    setExtraMessages(prev => ({
+      ...prev,
+      [40]: [
+        ...(prev[40] || []),
+        {
+          id: `p6-prompt-${Date.now()}`,
+          senderId: 42,
+          isPrivate: true,
+          text: 'You flagged Kevin\'s message as a bug. File it as a GitHub issue?',
+          targetedActions: [
+            { label: 'File via Workflows', action: 'p6_workflows' },
+            { label: 'File via Agency', action: 'p6_agency' },
+          ],
+          time: nowTimeStr(),
+        },
+      ],
+    }))
+  }
+
   const handleTargetedAction = (action) => {
     const chatId = activeChatId
 
@@ -658,6 +683,224 @@ export default function ChatView({
           ],
         }))
       }, 2400)
+      return
+    }
+
+    // P6 shared helpers
+    const p6IssueCardWorkflows = () => ({
+      accentColor: '#24292E',
+      title: '#4597 — Guest tenant blank page on expired token re-auth',
+      badge: { text: 'Open', tone: 'green' },
+      subtitle: 'northwind/agent-handoff · bug · p1',
+      facts: [
+        { label: 'Assigned', value: 'GitHub Copilot' },
+        { label: 'Labels', value: 'bug · auth · p1-critical' },
+        { label: 'Milestone', value: 'v2.1 hotfix' },
+      ],
+      footer: 'GitHub Issues · northwind/agent-handoff',
+    })
+
+    const p6IssueCardAgency = () => ({
+      ...p6IssueCardWorkflows(),
+      facts: [
+        { label: 'Assigned', value: 'GitHub Copilot' },
+        { label: 'Labels', value: 'bug · auth · p1-critical' },
+        { label: 'Milestone', value: 'v2.1 hotfix' },
+        { label: 'Context passed', value: 'Thread discussion + validateGuestToken trace' },
+      ],
+    })
+
+    const p6PRCard = (nowStr) => ({
+      accentColor: '#238636',
+      title: 'PR #4598 — Fix validateGuestToken claim format check',
+      badge: { text: 'Open', tone: 'green' },
+      subtitle: 'northwind/agent-handoff · 2 files · +12 −0',
+      sections: [
+        {
+          heading: 'auth/guest.ts',
+          diff: [
+            { type: ' ', text: '  // Validate token claims before expiry check' },
+            { type: '+', text: '  const fmt = detectClaimFormat(guestClaims)' },
+            { type: '+', text: '  if (fmt !== hostClaimFormat) {' },
+            { type: '+', text: "    return promptReAuth({ reason: 'GuestClaimMismatch' })" },
+            { type: '+', text: '  }' },
+            { type: ' ', text: '  if (isExpired(guestToken)) {' },
+            { type: ' ', text: "    return promptReAuth({ reason: 'TokenExpired' })" },
+            { type: ' ', text: '  }' },
+          ],
+        },
+      ],
+      footer: 'GitHub Copilot · northwind/agent-handoff · ' + nowStr,
+      actions: ['Review PR', { label: 'Approve & merge', primary: true }],
+    })
+
+    const p6DeployCard = (nowStr) => ({
+      accentColor: '#8250DF',
+      title: 'Deployed to production — northwind/agent-handoff',
+      badge: { text: 'Success', tone: 'green' },
+      subtitle: 'PR #4598 · main · commit a3f9c21',
+      steps: [
+        { text: 'PR #4598 approved — Kevin Park · Sarah Chen', status: 'done' },
+        { text: 'Merged to main', status: 'done' },
+        { text: 'Deploy pipeline passed — 4m 12s', status: 'done' },
+        { text: 'Production rollout complete — 100% traffic', status: 'done' },
+      ],
+      footer: 'GitHub Actions · northwind/agent-handoff · ' + nowStr,
+    })
+
+    const p6UsageCard = (nowStr) => ({
+      accentColor: '#0078D4',
+      title: 'Post-deploy telemetry — #4597',
+      subtitle: 'First 30 min after rollout',
+      metrics: [
+        { value: '0', label: 'Auth errors / hr', delta: '↓ 47 fixed', deltaTone: 'positive' },
+        { value: '100%', label: 'Re-auth success', delta: '↑ from 0%', deltaTone: 'positive' },
+        { value: '1.2s', label: 'Median re-auth time', delta: 'new', deltaTone: 'neutral' },
+      ],
+      bars: [
+        { label: 'iOS Safari', value: 98, valueLabel: '98%', color: '#107C10' },
+        { label: 'Chrome Android', value: 97, valueLabel: '97%', color: '#107C10' },
+        { label: 'Chrome Desktop', value: 100, valueLabel: '100%', color: '#107C10' },
+      ],
+      footer: 'Application Insights · live · ' + nowStr,
+    })
+
+    const scheduleCopilotOnward = (chatId, offset) => {
+      // Copilot picks up the issue
+      setTimeout(() => {
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-cop-1-${Date.now()}`,
+            senderId: 41,
+            text: 'Assigned to #4597 — reviewing `validateGuestToken()` now.',
+            time: nowTimeStr(),
+          }],
+        }))
+        setMainTyping({ chatId, contactId: 41 })
+      }, offset)
+
+      // Copilot PR
+      setTimeout(() => {
+        setMainTyping(prev => prev?.chatId === chatId ? null : prev)
+        const nowStr = nowTimeStr()
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-cop-pr-${Date.now()}`,
+            senderId: 41,
+            text: 'Fix ready. PR opened.',
+            cards: [p6PRCard(nowStr)],
+            time: nowStr,
+          }],
+        }))
+      }, offset + 1800)
+
+      // Review requested
+      setTimeout(() => {
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-review-${Date.now()}`,
+            isSystem: true,
+            text: 'Review requested · Kevin Park · Sarah Chen',
+          }],
+        }))
+      }, offset + 2300)
+
+      // Approvals
+      setTimeout(() => {
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []),
+            { id: `p6-kev-${Date.now()}`, senderId: 15, text: 'looks good — approved ✓', time: nowTimeStr() },
+            { id: `p6-sarah-${Date.now()}`, senderId: 1, text: 'approved ✓', time: nowTimeStr() },
+          ],
+        }))
+      }, offset + 3800)
+
+      // Deploy
+      setTimeout(() => {
+        const nowStr = nowTimeStr()
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-deploy-${Date.now()}`,
+            senderId: 42,
+            text: 'Merged and deployed.',
+            cards: [p6DeployCard(nowStr)],
+            time: nowStr,
+          }],
+        }))
+      }, offset + 4800)
+
+      // Usage data
+      setTimeout(() => {
+        const nowStr = nowTimeStr()
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-usage-${Date.now()}`,
+            senderId: 42,
+            text: 'Post-deploy telemetry coming in.',
+            cards: [p6UsageCard(nowStr)],
+            time: nowStr,
+          }],
+        }))
+      }, offset + 6800)
+    }
+
+    // P6 Workflows path
+    if (action.action === 'p6_workflows') {
+      setP6State('workflows')
+      const nowStr = nowTimeStr()
+      setExtraMessages(prev => ({
+        ...prev,
+        [chatId]: [...(prev[chatId] || []),
+          { id: `p6-wf-sys-${Date.now()}`, isSystem: true, text: 'Workflow triggered · Teams emoji reaction → GitHub Issues' },
+        ],
+      }))
+      setTimeout(() => {
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-wf-issue-${Date.now()}`,
+            senderId: 42,
+            text: 'GitHub issue created.',
+            cards: [p6IssueCardWorkflows()],
+            time: nowTimeStr(),
+          }],
+        }))
+      }, 500)
+      scheduleCopilotOnward(chatId, 2000)
+      return
+    }
+
+    // P6 Agency path
+    if (action.action === 'p6_agency') {
+      setP6State('agency')
+      setExtraMessages(prev => ({
+        ...prev,
+        [chatId]: [...(prev[chatId] || []), {
+          id: `p6-ag-text-${Date.now()}`,
+          senderId: 36,
+          text: 'On it — filing a GitHub issue for the validateGuestToken bug.',
+          time: nowTimeStr(),
+        }],
+      }))
+      setTimeout(() => {
+        setExtraMessages(prev => ({
+          ...prev,
+          [chatId]: [...(prev[chatId] || []), {
+            id: `p6-ag-issue-${Date.now()}`,
+            senderId: 36,
+            text: 'GitHub issue filed.',
+            cards: [p6IssueCardAgency()],
+            time: nowTimeStr(),
+          }],
+        }))
+      }, 800)
+      scheduleCopilotOnward(chatId, 2500)
       return
     }
   }
@@ -780,6 +1023,7 @@ export default function ChatView({
                   // Hide the targeted message once the user has acted on it.
                   if (msg.targetedActions && activeChatId === 35 && groupIntelAction !== null) return false
                   if (msg.targetedActions && activeChatId === 39 && p5Action !== null) return false
+                  if (msg.targetedActions && activeChatId === 40 && p6State && p6State !== 'prompted') return false
                   return true
                 })
                 .map((msg) => {
@@ -800,6 +1044,7 @@ export default function ChatView({
                     } : openJiraThread}
                     onTargetedAction={msg.targetedActions ? handleTargetedAction : undefined}
                     onCardAction={handleCardAction}
+                    onReact={activeChatId === 40 ? handleP6React : undefined}
                   />
                 )
               })}

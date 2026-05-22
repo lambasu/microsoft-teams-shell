@@ -16,6 +16,7 @@ const PROTOTYPE_CHAT = {
   'group-intelligence': 35,
   'earned-handoff-to-agency': 38,
   'facilitator-coordinates-agency': 39,
+  'emoji-to-deploy': 40,
 }
 
 export default function App() {
@@ -332,6 +333,33 @@ export default function App() {
             <strong>Yes, pass to Agency</strong> — Facilitator routes the
             context to Agency, then posts back a fix card with the code diff
             and a <strong>View PR on GitHub</strong> button.
+          </p>
+        </FreModal>
+      )}
+      {showFre && selectedPrototype === 'emoji-to-deploy' && (
+        <FreModal
+          title="Emoji to deploy"
+          subtitle="React with 🐛 on a bug report to kick off the full dev cycle — issue, PR, review, merge, deploy, and usage telemetry."
+          onDismiss={dismissFre}
+        >
+          <h3 className="fre-section-title">The flow</h3>
+          <p>
+            The team reports a bug in a group chat. React with 🐛 on Kevin's
+            message to flag it. A prompt appears with two filing paths:{' '}
+            <strong>Workflows</strong> (automated webhook — fires immediately,
+            basic issue metadata) or <strong>Agency</strong> (conversational AI
+            — passes full thread context and code trace to the issue). Choose
+            one and watch GitHub Copilot pick up the assignment, open a PR with
+            the fix, get reviewed and approved in-chat, deploy to production,
+            and stream back live usage telemetry.
+          </p>
+
+          <h3 className="fre-section-title">What to look for</h3>
+          <p>
+            Open <strong>Northwind bug triage</strong>. React 🐛 on Kevin's
+            message. Compare the two issue cards — Agency's includes{' '}
+            <strong>Context passed</strong>, Workflows doesn't. Both paths
+            converge at GitHub Copilot and play out the same way from there.
           </p>
         </FreModal>
       )}

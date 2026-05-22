@@ -1457,4 +1457,16 @@ export const messagesByContact = {
       time: 'Today 9:01 AM',
     },
   ],
+
+  // ── Northwind bug triage — emoji-to-deploy prototype (contact 40) ────────
+  // Scenario: Team reports a bug in chat. User reacts with 🐛 on Kevin's
+  // message, which triggers a path choice: Workflows (webhook) or Agency
+  // (context-aware). GitHub Copilot then picks up the issue, raises a PR,
+  // reviewers approve in-chat, it deploys, and usage telemetry streams in.
+  40: [
+    { id: 1, senderId: 12, text: 'getting reports from Northwind users — guest token expiry is causing a blank page mid-meeting', time: 'Today 9:44 AM' },
+    { id: 2, senderId: 3, text: 'confirmed — iOS Safari and Chrome Android both hit it. token expires during an active session and the page goes blank instead of prompting re-auth.', time: 'Today 9:46 AM' },
+    { id: 3, senderId: 15, text: 'this is the claim format mismatch in `validateGuestToken()` we flagged last sprint — it\'s in prod', time: 'Today 9:48 AM', reactions: [{ emoji: '😬', count: 2 }] },
+    { id: 4, senderId: 1, text: 'react with 🐛 on Kevin\'s message to file it as a GitHub issue', time: 'Today 9:49 AM' },
+  ],
 }

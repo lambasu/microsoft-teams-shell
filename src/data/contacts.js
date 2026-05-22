@@ -55,6 +55,9 @@ export const contacts = [
   { id: 37, name: 'Facilitator', initials: 'Fa', color: '#038387', status: null, isAgent: true, description: 'Group conversation coordinator and handoff facilitator' },
   { id: 38, name: 'JIRA-4593 hotfix', initials: 'JH', color: '#CA5010', status: null, isGroup: true, memberCount: 3 },
   { id: 39, name: 'Platform daily sync', initials: 'PD', color: '#038387', status: null, isGroup: true, memberCount: 5 },
+  { id: 40, name: 'Northwind bug triage', initials: 'NB', color: '#CA5010', status: null, isGroup: true, memberCount: 5 },
+  { id: 41, name: 'GitHub Copilot', initials: 'GC', color: '#6E40C9', status: null, isAgent: true, description: 'AI pair programmer — writes fixes, opens PRs, and reviews code' },
+  { id: 42, name: 'Workflows', initials: 'WF', color: '#0078D4', status: null, isAgent: true, description: 'Microsoft Teams automation — connects apps and automates processes' },
 ]
 
 // Teams the user belongs to. Each team has a list of channels (by contact id,
@@ -108,6 +111,7 @@ export const projectNorthwind = [
   { contactId: 35, bold: true },
   { contactId: 38, bold: true },
   { contactId: 39, bold: true },
+  { contactId: 40, bold: true },
   { contactId: 24 },
 ]
 

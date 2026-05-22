@@ -51,6 +51,16 @@ const PROTOTYPES = [
     tag: 'Group coordination',
     tagColor: '#038387',
   },
+  {
+    id: 'emoji-to-deploy',
+    number: '06',
+    title: 'Emoji to deploy',
+    description:
+      'React with 🐛 on a bug report to file a GitHub issue. Choose Workflows (automated webhook) or Agency (context-aware). GitHub Copilot raises the PR, reviewers approve in-chat, it deploys, and usage telemetry streams in.',
+    chat: 'Northwind bug triage',
+    tag: 'E2E workflow',
+    tagColor: '#8250DF',
+  },
 ]
 
 export default function PrototypeGallery({ onLaunch }) {

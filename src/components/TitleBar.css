@@ -94,3 +94,20 @@
 .title-user-avatar:hover {
   opacity: 0.9;
 }
+
+.title-btn-back {
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #5B5FC7;
+  padding: 4px 8px;
+}
+
+.title-btn-back:hover {
+  color: #5B5FC7;
+  background: rgba(91, 95, 199, 0.08);
+}
+
+.title-btn-back-label {
+  font-size: 12px;
+}
