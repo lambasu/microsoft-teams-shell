@@ -10,6 +10,7 @@ const QUICK_REACTIONS = [
   { key: 'heart', emoji: '❤️', label: 'Heart' },
   { key: 'laugh', emoji: '😂', label: 'Laugh' },
   { key: 'surprise', emoji: '😮', label: 'Surprise' },
+  { key: 'bug', emoji: '🐛', label: 'Bug' },
 ]
 
 export default function MessageActions({ onReact }) {
