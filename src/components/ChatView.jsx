@@ -132,14 +132,16 @@ export default function ChatView({
   const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
   const [p5Action, setP5Action] = useState(null) // null | 'confirmed' | 'skipped'
   const [p6State, setP6State] = useState(null) // null | 'prompted' | 'workflows' | 'agency'
-  // P7 — Lovable Stage View. p7Step drives the guided walkthrough:
-  //   1 → point user to "View Live Preview" on v1 card in main chat
-  //   2 → Stage View open; point user to "View Live Preview" on v2 card in rail
-  //   null → walkthrough complete
-  const [showStageView, setShowStageView] = useState(false)
+  // P7 — Lovable Stage View. p7Beat drives the scripted demo:
+  //   1 → main chat msgs 1-4; guide with "Next →"
+  //   2 → main chat msgs 1-9; guide with "Click View Live Preview" (v1 card)
+  //   3 → Stage View open; rail msgs 1-12; rail guide with "Next →"
+  //   4 → rail msgs 1-13 (In Progress card); rail guide with "Click View Live Preview" (v2 card)
+  //   5 → update animation playing in Stage View
+  //   6 → done — all messages revealed
+  const [p7Beat, setP7Beat] = useState(activeChatId === 44 ? 1 : null)
   const [stageViewVersion, setStageViewVersion] = useState('v1')
-  const [p7Step, setP7Step] = useState(activeChatId === 44 ? 1 : null)
-  const [p7UpdateDone, setP7UpdateDone] = useState(false)
+  const showStageView = activeChatId === 44 && p7Beat !== null && p7Beat >= 3
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -165,10 +167,8 @@ export default function ChatView({
     setGroupIntelAction(null)
     setP5Action(null)
     setP6State(null)
-    setShowStageView(false)
+    setP7Beat(activeChatId === 44 ? 1 : null)
     setStageViewVersion('v1')
-    setP7Step(activeChatId === 44 ? 1 : null)
-    setP7UpdateDone(false)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
