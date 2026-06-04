@@ -16,6 +16,7 @@ import {
 } from '../data'
 import { TypingIndicator, DemoArrow } from './common'
 import ContextBriefPanel from './ContextBriefPanel'
+import LivePreviewPanel from './LivePreviewPanel'
 import MessageRow from './MessageRow'
 import SessionsRail from './SessionsRail'
 import AgentsRail from './AgentsRail'
@@ -138,6 +139,7 @@ export default function ChatView({
   const [showStageView, setShowStageView] = useState(false)
   const [stageViewVersion, setStageViewVersion] = useState('v1')
   const [p7Step, setP7Step] = useState(activeChatId === 44 ? 1 : null)
+  const [p7UpdateDone, setP7UpdateDone] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -166,6 +168,7 @@ export default function ChatView({
     setShowStageView(false)
     setStageViewVersion('v1')
     setP7Step(activeChatId === 44 ? 1 : null)
+    setP7UpdateDone(false)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -567,7 +570,12 @@ export default function ChatView({
   const showPromptSuggestions = !!agentSuggestions && messages.length === 0 && mainTyping?.chatId !== activeChatId
 
   const contextBrief = activeContact.contextBriefId ? contextBriefs[activeContact.contextBriefId] : null
-  const pinnedTab = contextBrief ? { label: contextBrief.filename } : null
+  const hasLivePreview = !!activeContact.livePreviewPanel
+  const pinnedTab = contextBrief
+    ? { label: contextBrief.filename }
+    : hasLivePreview
+      ? { label: 'Live Preview' }
+      : null
 
   // Group intelligence: monitoring agents for this chat (ids → contact objects).
   const monitoringAgentIds = activeContact.monitoringAgents || []
@@ -930,6 +938,10 @@ export default function ChatView({
   // P7: "View Live Preview" card action — open Teams Stage View with the
   // Lovable-generated Morgan Collective site.
   const handleCardAction = ({ type, version }) => {
+    if (type === 'open_pinned_tab') {
+      setActiveTab('pinned')
+      return
+    }
     if (type === 'open_stage_view') {
       setShowStageView(true)
       if (version) setStageViewVersion(version)
@@ -986,6 +998,7 @@ export default function ChatView({
           onVersionChange={setStageViewVersion}
           step={p7Step}
           onStepAdvance={() => setP7Step(null)}
+          onUpdateComplete={() => setP7UpdateDone(true)}
           onClose={() => setShowStageView(false)}
         />
       )}
@@ -1023,6 +1036,8 @@ export default function ChatView({
 
         {activeTab === 'pinned' && contextBrief ? (
           <ContextBriefPanel brief={contextBrief} />
+        ) : activeTab === 'pinned' && hasLivePreview ? (
+          <LivePreviewPanel />
         ) : (
         <div className="chat-messages">
           {isChannel ? (
@@ -1071,6 +1086,8 @@ export default function ChatView({
                   if (msg.targetedActions && activeChatId === 35 && groupIntelAction !== null) return false
                   if (msg.targetedActions && activeChatId === 39 && p5Action !== null) return false
                   if (msg.targetedActions && activeChatId === 40 && p6State && p6State !== 'prompted') return false
+                  // P7: hide messages 14+ until the Stage View update animation completes
+                  if (activeChatId === 44 && !p7UpdateDone && msg.id >= 14) return false
                   return true
                 })
                 .map((msg) => {

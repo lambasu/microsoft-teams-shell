@@ -1572,7 +1572,28 @@ export const messagesByContact = {
       ],
       time: 'Mon 11:32 AM',
     },
-    { id: 13, senderId: 43, text: 'On it — applying both updates now.', time: 'Mon 11:32 AM' },
+    {
+      id: 13,
+      senderId: 43,
+      text: 'On it — applying both updates now.',
+      cards: [
+        {
+          accentColor: '#FF3B8B',
+          title: 'Morgan Collective — updating',
+          subtitle: 'Applying: hero headline + accent color',
+          badge: { text: 'In progress', tone: 'amber' },
+          steps: [
+            { text: 'Hero headline → "AI-native product strategy for enterprise"', status: 'running' },
+            { text: 'Accent color → #6264A7 (MC purple)', status: 'pending' },
+          ],
+          footer: 'Lovable · Applying changes · Just now',
+          actions: [
+            { label: 'View Live Preview', type: 'open_stage_view', version: 'v2', primary: true },
+          ],
+        },
+      ],
+      time: 'Mon 11:32 AM',
+    },
     {
       id: 14,
       senderId: 43,
@@ -1602,5 +1623,78 @@ export const messagesByContact = {
       time: 'Mon 11:33 AM',
     },
     { id: 15, senderId: 'me', text: "that's it", time: 'Mon 11:34 AM', reactions: [{ emoji: '🔥', count: 3 }] },
+  ],
+
+  // ── Morgan Collective site review — P8: Shared Presence in Chat Tabs ──────
+  // Scenario: team wants to co-review the Lovable site before a client call,
+  // without jumping into a meeting. Lovable pins a Live Preview tab powered by
+  // chat-scoped Azure Fluid Relay — shared scroll + presence cursors, no call.
+  50: [
+    { id: 1, senderId: 12, text: 'can we do a quick co-review of the lovable site before my client call thursday? don\'t want to jump on a call just to look at the same page', time: 'Tue 9:44 AM' },
+    { id: 2, senderId: 15, text: 'same thing happened during the northwind launch review — everyone had different scroll positions, feedback was all over the place', time: 'Tue 9:46 AM', reactions: [{ emoji: '😩', count: 2 }] },
+    { id: 3, senderId: 30, text: 'the pinned tab helps but you can\'t tell where others are actually looking. we were all reviewing different sections and didn\'t realize', time: 'Tue 9:48 AM' },
+    { id: 4, senderId: 'me', text: 'agreed. adding lovable — let\'s see if we can solve this properly', time: 'Tue 9:50 AM' },
+    { id: 5, isSystem: true, text: 'Alex added Lovable to the conversation', time: 'Tue 9:50 AM' },
+    {
+      id: 6,
+      senderId: 'me',
+      text: [
+        { type: 'mention', name: '@Lovable' },
+        ' pin a shared live preview for this group — we need everyone to see the same scroll state and where others are on the page. no meeting, just the tab',
+      ],
+      time: 'Tue 9:51 AM',
+    },
+    {
+      id: 7,
+      senderId: 43,
+      text: 'On it — setting up a shared presence session for your group.',
+      cards: [
+        {
+          accentColor: '#FF3B8B',
+          title: 'Morgan Collective — Co-View setup',
+          subtitle: 'Connecting chat to Azure Fluid Relay · no meeting required',
+          badge: { text: 'Connecting', tone: 'amber' },
+          steps: [
+            { text: 'Provision chat-scoped Fluid container for this group', status: 'running' },
+            { text: 'Sync latest site build (v2 — MC purple)', status: 'pending' },
+            { text: 'Enable shared scroll state across all viewers', status: 'pending' },
+            { text: 'Enable presence cursors — real-time position sync', status: 'pending' },
+            { text: 'Pin Live Preview tab to chat header', status: 'pending' },
+          ],
+          footer: 'Lovable · Connecting · Just now',
+        },
+      ],
+      time: 'Tue 9:51 AM',
+    },
+    {
+      id: 8,
+      senderId: 43,
+      text: 'Live Preview tab pinned. All four of you will see the same scroll position and each other\'s cursor when you open it — no meeting needed.',
+      cards: [
+        {
+          accentColor: '#FF3B8B',
+          title: 'Morgan Collective — Co-View ready',
+          subtitle: 'Live Preview tab · 4 viewers · shared scroll + presence cursors',
+          badge: { text: 'Live', tone: 'green' },
+          steps: [
+            { text: 'Chat-scoped Fluid container provisioned', status: 'done' },
+            { text: 'Latest site build synced (v2 — MC purple)', status: 'done' },
+            { text: 'Shared scroll state active', status: 'done' },
+            { text: 'Presence cursors enabled — real-time position sync', status: 'done' },
+            { text: 'Live Preview tab pinned to chat header', status: 'done' },
+          ],
+          footer: 'Lovable · Powered by chat-scoped Azure Fluid Relay · No meeting required',
+          actions: [
+            { label: 'Co-Review', type: 'open_pinned_tab', primary: true },
+            'Request changes',
+          ],
+        },
+      ],
+      time: 'Tue 9:52 AM',
+    },
+    { id: 9, isSystem: true, text: 'Lovable pinned Live Preview — co-view enabled', systemIcon: 'pin', time: 'Tue 9:52 AM' },
+    { id: 10, senderId: 12, text: 'opening it now — can see kevin and taylor in there already', time: 'Tue 9:53 AM' },
+    { id: 11, senderId: 15, text: 'same. this is the thing that was missing. we\'re all on the same section', time: 'Tue 9:54 AM', reactions: [{ emoji: '🎯', count: 2 }] },
+    { id: 12, senderId: 30, text: 'no call needed. this is the move', time: 'Tue 9:55 AM' },
   ],
 }

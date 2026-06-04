@@ -121,8 +121,10 @@ function MockWebsite({ version }) {
 
 // ── Chat rail ─────────────────────────────────────────────────────────────────
 // Renders the group chat messages from contact 44 in a narrow Teams-style rail.
-function ChatRail({ onCardAction, step }) {
-  const messages = messagesByContact[CHAT_ID] || []
+function ChatRail({ onCardAction, step, updateComplete }) {
+  const allMessages = messagesByContact[CHAT_ID] || []
+  // Hide messages 14+ until the update animation completes — same gate as main chat
+  const messages = updateComplete ? allMessages : allMessages.filter(m => m.isSystem || m.id < 14)
   const endRef = useRef(null)
   useEffect(() => { endRef.current?.scrollIntoView() }, [])
 
@@ -233,11 +235,12 @@ function ChatRail({ onCardAction, step }) {
 }
 
 // ── Stage View pop-out window ─────────────────────────────────────────────────
-export default function StageView({ version = 'v1', onVersionChange, step, onStepAdvance, onClose }) {
+export default function StageView({ version = 'v1', onVersionChange, step, onStepAdvance, onUpdateComplete, onClose }) {
   // displayVersion is what's actually rendered in the website preview.
   // It lags behind `version` to allow the update animation to play first.
   const [displayVersion, setDisplayVersion] = useState('v1')
   const [bannerState, setBannerState] = useState(null) // null | 'updating' | 'done'
+  const [updateComplete, setUpdateComplete] = useState(false)
   const prevVersionRef = useRef(version)
 
   useEffect(() => {
@@ -247,6 +250,8 @@ export default function StageView({ version = 'v1', onVersionChange, step, onSte
       const applyTimer = setTimeout(() => {
         setDisplayVersion(version)
         setBannerState('done')
+        setUpdateComplete(true)
+        onUpdateComplete?.()
         const clearTimer = setTimeout(() => setBannerState(null), 2200)
         return () => clearTimeout(clearTimer)
       }, 2800)
@@ -314,7 +319,7 @@ export default function StageView({ version = 'v1', onVersionChange, step, onSte
           <div className={`sv-preview ${bannerState === 'updating' ? 'sv-preview-updating' : ''}`}>
             <MockWebsite version={displayVersion} />
           </div>
-          <ChatRail onCardAction={handleCardAction} step={step} />
+          <ChatRail onCardAction={handleCardAction} step={step} updateComplete={updateComplete} />
         </div>
 
       </div>
