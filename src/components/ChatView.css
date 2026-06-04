@@ -13,13 +13,6 @@
   min-width: 0;
 }
 
-/* Stage View split layout — Stage View panel is on the left; chat
-   becomes a fixed-width right rail so both are visible at once. */
-.chat-view.has-stage-view .chat-view-main {
-  flex: none;
-  width: 440px;
-  border-left: 1px solid #E8E8E8;
-}
 
 /* Header styles live in ChatHeader.css. Compose styles live in Compose.css. */
 

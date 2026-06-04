@@ -964,10 +964,11 @@ export default function ChatView({
   }
 
   return (
-    <div className={`chat-view${showStageView ? ' has-stage-view' : ''}`}>
+    <div className="chat-view">
       {showStageView && (
         <StageView
           version={stageViewVersion}
+          onVersionChange={setStageViewVersion}
           onClose={() => setShowStageView(false)}
         />
       )}
