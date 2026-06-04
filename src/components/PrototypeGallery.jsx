@@ -71,6 +71,16 @@ const PROTOTYPES = [
     tag: 'Stage View',
     tagColor: '#FF3B8B',
   },
+  {
+    id: 'lovable-live-edit',
+    number: '08',
+    title: 'Lovable — live editing + text selection',
+    description:
+      'Team approves a build plan, Lovable builds the site and opens it in Stage View. The team gives feedback in chat; Lovable applies updates live — elements animate as changes are written. Any user can highlight text in the preview, pick "Update selected text to…", type the replacement in the rail compose, and Lovable applies it instantly.',
+    chat: 'Beacon site',
+    tag: 'Stage View · Live Edit',
+    tagColor: '#FF3B8B',
+  },
 ]
 
 export default function PrototypeGallery({ onLaunch }) {

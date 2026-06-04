@@ -18,6 +18,7 @@ const PROTOTYPE_CHAT = {
   'facilitator-coordinates-agency': 39,
   'emoji-to-deploy': 40,
   'lovable-stage-view': 44,
+  'lovable-live-edit': 55,
 }
 
 export default function App() {

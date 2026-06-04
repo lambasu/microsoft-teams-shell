@@ -1697,4 +1697,61 @@ export const messagesByContact = {
     { id: 11, senderId: 15, text: 'same. this is the thing that was missing. we\'re all on the same section', time: 'Tue 9:54 AM', reactions: [{ emoji: '🎯', count: 2 }] },
     { id: 12, senderId: 30, text: 'no call needed. this is the move', time: 'Tue 9:55 AM' },
   ],
+
+  // ── P08 — Beacon site (Lovable collaborative build w/ live editing + text selection) ──
+  // Contact 55 = "Beacon site" group. Alex + Kevin (15) + Rachel (12) + Lovable (43).
+  // Msgs 1-6: planning phase + plan card (static, beat-gated).
+  // Msgs 7-8: completion card — added dynamically via extraMessages after approval.
+  // Msgs 9-12: Stage View feedback + update plan (static, shown in rail at beat 4+).
+  55: [
+    { id: 1, senderId: 15, text: "Rachel's sign-off came through this morning — we're cleared to start on the Beacon site", time: '9:02 AM' },
+    { id: 2, senderId: 12, text: "finally! I want something that actually shows what the product does. Not just generic B2B copy", time: '9:03 AM', reactions: [{ emoji: '💯', count: 2 }] },
+    { id: 3, senderId: 'me', text: "agreed — let's use Lovable. I'll brief it now", time: '9:04 AM' },
+    { id: 4, isSystem: true, text: 'Alex Morgan added Lovable' },
+    { id: 5, senderId: 'me', text: [
+      { type: 'mention', name: 'Lovable' },
+      ' build a website for Beacon — AI-powered business analytics for SMBs. Dark hero, clean sections, blue accent. Lead with outcomes, not features.',
+    ], time: '9:04 AM' },
+    { id: 6, senderId: 43, text: "Here's my plan. Let me know if you'd like to change anything before I start.", time: '9:05 AM',
+      cards: [{
+        accentColor: '#FF3B8B',
+        title: 'Beacon website — build plan',
+        badge: { text: 'Pending approval', tone: 'neutral' },
+        steps: [
+          { text: 'Hero — outcome-led headline, CTA, dashboard preview', status: 'pending' },
+          { text: 'Features — 3 core product pillars', status: 'pending' },
+          { text: 'How it works — 3-step explainer', status: 'pending' },
+          { text: 'Pricing — Starter / Growth / Enterprise', status: 'pending' },
+          { text: 'Footer — nav, legal, social', status: 'pending' },
+        ],
+        actions: [
+          { label: 'Approve', primary: true, type: 'p8_approve_plan' },
+          'Request changes',
+        ],
+      }],
+    },
+    // Msgs 7-8 are added dynamically to extraMessages after "Approve" is clicked.
+    // Msgs 9-12 are the Stage View feedback conversation (shown in rail at beat 4+).
+    { id: 9, senderId: 15, text: "hero headline is too generic — needs to lead with the outcome, not the category", time: '9:11 AM' },
+    { id: 10, senderId: 12, text: "pricing should come after 'how it works' — leads with value before asking for money", time: '9:12 AM' },
+    { id: 11, senderId: 'me', text: [
+      { type: 'mention', name: 'Lovable' },
+      ' sharper headline that leads with business outcome, and reorder: how it works → pricing. Keep everything else.',
+    ], time: '9:12 AM' },
+    { id: 12, senderId: 43, text: "Got it. Here's the update plan.", time: '9:13 AM',
+      cards: [{
+        accentColor: '#FF3B8B',
+        title: 'Beacon — update plan',
+        badge: { text: 'Pending approval', tone: 'neutral' },
+        steps: [
+          { text: 'Rewrite hero headline — lead with business outcome', status: 'pending' },
+          { text: 'Reorder sections — How it works → Pricing', status: 'pending' },
+        ],
+        actions: [
+          { label: 'Approve', primary: true, type: 'p8_approve_update' },
+          'Request changes',
+        ],
+      }],
+    },
+  ],
 }

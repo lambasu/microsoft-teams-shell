@@ -25,6 +25,7 @@ import ChannelThreadRail from './ChannelThreadRail'
 import ChatHeader from './ChatHeader'
 import Compose from './Compose'
 import StageView from './StageView'
+import StageView8 from './StageView8'
 import './ChatView.css'
 
 // Convert a channel post (root + replies) into the message shape MessageRow
@@ -142,6 +143,17 @@ export default function ChatView({
   const [p7Beat, setP7Beat] = useState(activeChatId === 44 ? 1 : null)
   const [stageViewVersion, setStageViewVersion] = useState('v1')
   const showStageView = activeChatId === 44 && p7Beat !== null && p7Beat >= 3
+  // P8 — Beacon site (Lovable build w/ live editing + text selection).
+  //   1 → msgs 1-3 (planning); guide Next →
+  //   2 → msgs 1-6 (plan card); guide Click Approve ↓
+  //   3 → typing + completion card (extraMessages); guide Click Open in Stage View ↓
+  //   4 → Stage View open; rail msgs 9-11; guide Next → in rail
+  //   5 → rail msgs 9-12 (update plan); guide Click Approve ↓ in rail
+  //   6 → live editing animation (auto → 7)
+  //   7 → done; text selection available in preview
+  //   8 → text update applied; v3 headline shown
+  const [p8Beat, setP8Beat] = useState(activeChatId === 55 ? 1 : null)
+  const showStageView8 = activeChatId === 55 && p8Beat !== null && p8Beat >= 4
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -169,6 +181,7 @@ export default function ChatView({
     setP6State(null)
     setP7Beat(activeChatId === 44 ? 1 : null)
     setStageViewVersion('v1')
+    setP8Beat(activeChatId === 55 ? 1 : null)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -212,6 +225,51 @@ export default function ChatView({
     }, 350)
     return () => clearTimeout(t)
   }, [activeChatId, p7Beat])
+
+  // P8 beat 2: scroll to plan card (msg 6); beat 3: show typing then completion card.
+  useEffect(() => {
+    if (activeChatId !== 55) return
+    if (p8Beat === 2) {
+      const t = setTimeout(() => {
+        document.querySelector('[data-message-id="6"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }, 350)
+      return () => clearTimeout(t)
+    }
+  }, [activeChatId, p8Beat])
+
+  // P8 beat 3: show typing indicator then reveal the completion card (added to extraMessages).
+  useEffect(() => {
+    if (activeChatId !== 55 || p8Beat !== 3) return
+    const chatId = 55
+    setMainTyping({ chatId, contactId: 43 })
+    const t = setTimeout(() => {
+      setMainTyping(prev => prev?.chatId === chatId ? null : prev)
+      const nowStr = nowTimeStr()
+      setExtraMessages(prev => ({
+        ...prev,
+        [chatId]: [...(prev[chatId] || []), {
+          id: `p8-done-${Date.now()}`,
+          senderId: 43,
+          text: "Site is ready. Here's your Beacon v1.",
+          time: nowStr,
+          cards: [{
+            accentColor: '#FF3B8B',
+            title: 'Beacon — v1 live',
+            badge: { text: 'Ready', tone: 'green' },
+            steps: [
+              { text: 'Hero section — headline, CTA, dashboard preview', status: 'done' },
+              { text: 'Features — Analytics, Forecasting, Integrations', status: 'done' },
+              { text: 'Pricing section — Starter / Growth / Enterprise', status: 'done' },
+              { text: 'How it works — 3-step explainer', status: 'done' },
+              { text: 'Footer — nav, legal, social', status: 'done' },
+            ],
+            actions: [{ label: 'Open in Stage View', primary: true, type: 'p8_open_stage_view' }],
+          }],
+        }],
+      }))
+    }, 2200)
+    return () => clearTimeout(t)
+  }, [activeChatId, p8Beat])
 
   useEffect(() => {
     if (highlightMessageId) {
@@ -945,9 +1003,17 @@ export default function ChatView({
     if (type === 'open_stage_view') {
       if (version) setStageViewVersion(version)
       if (activeChatId === 44) {
-        if (p7Beat === 2) setP7Beat(3)      // clicking v1 preview → open Stage View
-        else if (p7Beat === 4) setP7Beat(5) // clicking v2 preview → start animation
+        if (p7Beat === 2) setP7Beat(3)
+        else if (p7Beat === 4) setP7Beat(5)
       }
+      return
+    }
+    if (type === 'p8_approve_plan') {
+      if (activeChatId === 55 && p8Beat === 2) setP8Beat(3)
+      return
+    }
+    if (type === 'p8_open_stage_view') {
+      if (activeChatId === 55 && p8Beat === 3) setP8Beat(4)
       return
     }
     if (type !== 'open_in_agency') return
@@ -991,6 +1057,49 @@ export default function ChatView({
     onSelectChat(36, { showSessions: true, sessionId })
   }
 
+  // P8: user sends a message from the Stage View rail (text selection flow).
+  // Adds the message to the group chat and schedules Lovable's response.
+  const handleP8SendMessage = (text) => {
+    const chatId = 55
+    const nowStr = nowTimeStr()
+    // Parse @Lovable mention if present
+    const parts = text.match(/^(@Lovable,?\s*)/i)
+    const messageText = parts
+      ? [{ type: 'mention', name: 'Lovable' }, text.slice(parts[1].length)]
+      : text
+    setExtraMessages(prev => ({
+      ...prev,
+      [chatId]: [...(prev[chatId] || []), {
+        id: `p8-u-${Date.now()}`,
+        senderId: 'me',
+        text: messageText,
+        time: nowStr,
+      }],
+    }))
+    setMainTyping({ chatId, contactId: 43 })
+    setTimeout(() => {
+      setMainTyping(prev => prev?.chatId === chatId ? null : prev)
+      const doneStr = nowTimeStr()
+      setExtraMessages(prev => ({
+        ...prev,
+        [chatId]: [...(prev[chatId] || []), {
+          id: `p8-lov-${Date.now()}`,
+          senderId: 43,
+          text: 'Done! Updated the hero headline.',
+          time: doneStr,
+          cards: [{
+            accentColor: '#FF3B8B',
+            title: 'Beacon — text updated',
+            badge: { text: 'Done', tone: 'green' },
+            steps: [{ text: 'Hero headline updated', status: 'done' }],
+            footer: 'Lovable · Beacon site · ' + doneStr,
+          }],
+        }],
+      }))
+      setP8Beat(8)
+    }, 2000)
+  }
+
   return (
     <div className="chat-view">
       {showStageView && (
@@ -1001,6 +1110,16 @@ export default function ChatView({
           onBeatAdvance={() => setP7Beat(prev => prev + 1)}
           onUpdateComplete={() => setP7Beat(6)}
           onClose={() => setP7Beat(6)}
+        />
+      )}
+      {showStageView8 && (
+        <StageView8
+          messages={messages}
+          beat={p8Beat}
+          onBeatAdvance={() => setP8Beat(prev => prev + 1)}
+          onUpdateComplete={() => setP8Beat(7)}
+          onSendMessage={handleP8SendMessage}
+          onClose={() => setP8Beat(8)}
         />
       )}
       <div className="chat-view-main">
@@ -1039,6 +1158,29 @@ export default function ChatView({
           <div className="p7-step-guide">
             <span className="p7-step-num">Step 2 of 4</span>
             <span className="p7-step-text">Lovable built a first draft — click <strong>View Live Preview</strong> below</span>
+            <span className="p7-step-arrow"><DemoArrow direction="down" size={16} /></span>
+          </div>
+        )}
+
+        {/* P8 guides */}
+        {activeChatId === 55 && p8Beat === 1 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 1 of 5</span>
+            <span className="p7-step-text">The team is ready to build the Beacon website</span>
+            <button className="p7-step-next" onClick={() => setP8Beat(2)}>Next →</button>
+          </div>
+        )}
+        {activeChatId === 55 && p8Beat === 2 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 2 of 5</span>
+            <span className="p7-step-text">Lovable has a build plan — click <strong>Approve</strong> on the card below</span>
+            <span className="p7-step-arrow"><DemoArrow direction="down" size={16} /></span>
+          </div>
+        )}
+        {activeChatId === 55 && p8Beat === 3 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 3 of 5</span>
+            <span className="p7-step-text">Lovable is building — click <strong>Open in Stage View</strong> once it's ready</span>
             <span className="p7-step-arrow"><DemoArrow direction="down" size={16} /></span>
           </div>
         )}
@@ -1099,6 +1241,13 @@ export default function ChatView({
                   if (activeChatId === 44 && p7Beat !== null) {
                     const maxId = [0, 4, 9, 12, 13, 13, Infinity][Math.min(p7Beat, 6)]
                     if (msg.id > maxId) return false
+                  }
+                  // P8: reveal messages progressively by beat
+                  if (activeChatId === 55 && p8Beat !== null) {
+                    // beat→maxId: 1→3, 2→6, 3→6, 4→11, 5→12, 6+→∞
+                    const p8MaxIds = [0, 3, 6, 6, 11, 12, Infinity, Infinity, Infinity]
+                    const maxId = p8MaxIds[Math.min(p8Beat, 8)] ?? Infinity
+                    if (typeof msg.id === 'number' && msg.id > maxId) return false
                   }
                   return true
                 })

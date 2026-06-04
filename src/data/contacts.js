@@ -61,6 +61,7 @@ export const contacts = [
   { id: 43, name: 'Lovable', initials: 'Lv', color: '#FF3B8B', status: null, isAgent: true, logo: 'lovable', description: 'AI website builder — generate and iterate on full-stack web apps from prompts' },
   { id: 44, name: 'Morgan Collective website', initials: 'MC', color: '#6264A7', status: null, isGroup: true, memberCount: 4 },
   { id: 50, name: 'Morgan Collective site review', initials: 'MC', color: '#6264A7', status: null, isGroup: true, memberCount: 4, livePreviewPanel: true },
+  { id: 55, name: 'Beacon site', initials: 'BS', color: '#0078D4', status: null, isGroup: true, memberCount: 4 },
 ]
 
 // Teams the user belongs to. Each team has a list of channels (by contact id,
@@ -140,6 +141,7 @@ export const chatList = [
   { contactId: 33 },
   { contactId: 44, bold: true },
   { contactId: 50, bold: true },
+  { contactId: 55, bold: true },
 ]
 
 // Channels inherit their parent team's avatar — a channel in the chat list
