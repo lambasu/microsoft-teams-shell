@@ -50,6 +50,22 @@
   flex-shrink: 0;
 }
 
+.p7-step-next {
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid #b8860b;
+  color: #4a3000;
+  padding: 3px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.p7-step-next:hover {
+  background: rgba(0,0,0,0.06);
+}
+
 
 /* Header styles live in ChatHeader.css. Compose styles live in Compose.css. */
 

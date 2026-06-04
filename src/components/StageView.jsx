@@ -251,7 +251,6 @@ export default function StageView({ version = 'v1', onVersionChange, beat, onBea
   // It lags behind `version` to allow the update animation to play first.
   const [displayVersion, setDisplayVersion] = useState('v1')
   const [bannerState, setBannerState] = useState(null) // null | 'updating' | 'done'
-  const [updateComplete, setUpdateComplete] = useState(false)
   const prevVersionRef = useRef(version)
 
   useEffect(() => {
@@ -261,7 +260,6 @@ export default function StageView({ version = 'v1', onVersionChange, beat, onBea
       const applyTimer = setTimeout(() => {
         setDisplayVersion(version)
         setBannerState('done')
-        setUpdateComplete(true)
         onUpdateComplete?.()
         const clearTimer = setTimeout(() => setBannerState(null), 2200)
         return () => clearTimeout(clearTimer)
