@@ -204,14 +204,14 @@ export default function ChatView({
     clearNavIntent()
   }
 
-  // P7 step 1: scroll to message 9 (v1 completion card) so the target is visible.
+  // P7 beat 2: scroll to message 9 (v1 completion card) so the click target is visible.
   useEffect(() => {
-    if (activeChatId !== 44 || p7Step !== 1) return
+    if (activeChatId !== 44 || p7Beat !== 2) return
     const t = setTimeout(() => {
       document.querySelector('[data-message-id="9"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }, 350)
     return () => clearTimeout(t)
-  }, [activeChatId, p7Step])
+  }, [activeChatId, p7Beat])
 
   useEffect(() => {
     if (highlightMessageId) {
@@ -943,10 +943,11 @@ export default function ChatView({
       return
     }
     if (type === 'open_stage_view') {
-      setShowStageView(true)
       if (version) setStageViewVersion(version)
-      // Advance the guided walkthrough step
-      if (activeChatId === 44 && p7Step === 1) setP7Step(2)
+      if (activeChatId === 44) {
+        if (p7Beat === 2) setP7Beat(3)      // clicking v1 preview → open Stage View
+        else if (p7Beat === 4) setP7Beat(5) // clicking v2 preview → start animation
+      }
       return
     }
     if (type !== 'open_in_agency') return
@@ -996,10 +997,10 @@ export default function ChatView({
         <StageView
           version={stageViewVersion}
           onVersionChange={setStageViewVersion}
-          step={p7Step}
-          onStepAdvance={() => setP7Step(null)}
-          onUpdateComplete={() => setP7UpdateDone(true)}
-          onClose={() => setShowStageView(false)}
+          beat={p7Beat}
+          onBeatAdvance={() => setP7Beat(prev => prev + 1)}
+          onUpdateComplete={() => setP7Beat(6)}
+          onClose={() => setP7Beat(6)}
         />
       )}
       <div className="chat-view-main">
@@ -1025,11 +1026,19 @@ export default function ChatView({
           onSelectTab={setActiveTab}
         />
 
-        {/* P7 step 1 guide — floats above the message list, points down toward the v1 card */}
-        {activeChatId === 44 && p7Step === 1 && (
+        {/* P7 beat 1 guide — team planning phase, Next advances to show Lovable's v1 output */}
+        {activeChatId === 44 && p7Beat === 1 && (
           <div className="p7-step-guide">
-            <span className="p7-step-num">Step 1 of 2</span>
-            <span className="p7-step-text">Click <strong>View Live Preview</strong> on Lovable's completion card below</span>
+            <span className="p7-step-num">Step 1 of 4</span>
+            <span className="p7-step-text">Your team is planning the Morgan Collective website</span>
+            <button className="p7-step-next" onClick={() => setP7Beat(2)}>Next →</button>
+          </div>
+        )}
+        {/* P7 beat 2 guide — Lovable's v1 card visible, point to View Live Preview */}
+        {activeChatId === 44 && p7Beat === 2 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 2 of 4</span>
+            <span className="p7-step-text">Lovable built a first draft — click <strong>View Live Preview</strong> below</span>
             <span className="p7-step-arrow"><DemoArrow direction="down" size={16} /></span>
           </div>
         )}
@@ -1086,8 +1095,11 @@ export default function ChatView({
                   if (msg.targetedActions && activeChatId === 35 && groupIntelAction !== null) return false
                   if (msg.targetedActions && activeChatId === 39 && p5Action !== null) return false
                   if (msg.targetedActions && activeChatId === 40 && p6State && p6State !== 'prompted') return false
-                  // P7: hide messages 14+ until the Stage View update animation completes
-                  if (activeChatId === 44 && !p7UpdateDone && msg.id >= 14) return false
+                  // P7: reveal messages progressively by beat
+                  if (activeChatId === 44 && p7Beat !== null) {
+                    const maxId = [0, 4, 9, 12, 13, 13, Infinity][Math.min(p7Beat, 6)]
+                    if (msg.id > maxId) return false
+                  }
                   return true
                 })
                 .map((msg) => {

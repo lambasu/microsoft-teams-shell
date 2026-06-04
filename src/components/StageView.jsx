@@ -121,12 +121,16 @@ function MockWebsite({ version }) {
 
 // ── Chat rail ─────────────────────────────────────────────────────────────────
 // Renders the group chat messages from contact 44 in a narrow Teams-style rail.
-function ChatRail({ onCardAction, step, updateComplete }) {
+function ChatRail({ onCardAction, beat, onBeatAdvance }) {
   const allMessages = messagesByContact[CHAT_ID] || []
-  // Hide messages 14+ until the update animation completes — same gate as main chat
-  const messages = updateComplete ? allMessages : allMessages.filter(m => m.isSystem || m.id < 14)
+  // Reveal messages progressively by beat:
+  //   beat 3 → up to id 12 (team feedback)
+  //   beat 4 → up to id 13 (In Progress card — the v2 click target)
+  //   beat 5+ → all messages
+  const maxId = beat < 4 ? 12 : beat < 6 ? 13 : Infinity
+  const messages = allMessages.filter(m => m.isSystem || m.id <= maxId)
   const endRef = useRef(null)
-  useEffect(() => { endRef.current?.scrollIntoView() }, [])
+  useEffect(() => { endRef.current?.scrollIntoView() }, [beat])
 
   return (
     <div className="sv-rail">
@@ -135,10 +139,17 @@ function ChatRail({ onCardAction, step, updateComplete }) {
         <div className="sv-rail-chat-name">Morgan Collective website</div>
       </div>
 
-      {step === 2 && (
+      {beat === 3 && (
         <div className="sv-rail-step-guide">
-          <span className="sv-rail-step-num">Step 2 of 2</span>
-          <span className="sv-rail-step-text">Click <strong>View Live Preview</strong> on the updated card below</span>
+          <span className="sv-rail-step-num">Step 3 of 4</span>
+          <span className="sv-rail-step-text">The team reviewed and gave feedback</span>
+          <button className="sv-rail-step-next-btn" onClick={onBeatAdvance}>Next →</button>
+        </div>
+      )}
+      {beat === 4 && (
+        <div className="sv-rail-step-guide">
+          <span className="sv-rail-step-num">Step 4 of 4</span>
+          <span className="sv-rail-step-text">Click <strong>View Live Preview</strong> on Lovable's update card below</span>
           <span className="sv-rail-step-arrow"><DemoArrow direction="down" size={14} /></span>
         </div>
       )}
@@ -235,7 +246,7 @@ function ChatRail({ onCardAction, step, updateComplete }) {
 }
 
 // ── Stage View pop-out window ─────────────────────────────────────────────────
-export default function StageView({ version = 'v1', onVersionChange, step, onStepAdvance, onUpdateComplete, onClose }) {
+export default function StageView({ version = 'v1', onVersionChange, beat, onBeatAdvance, onUpdateComplete, onClose }) {
   // displayVersion is what's actually rendered in the website preview.
   // It lags behind `version` to allow the update animation to play first.
   const [displayVersion, setDisplayVersion] = useState('v1')
@@ -262,7 +273,7 @@ export default function StageView({ version = 'v1', onVersionChange, step, onSte
   const handleCardAction = ({ type, version: v }) => {
     if (type === 'open_stage_view' && v) {
       onVersionChange?.(v)
-      if (v === 'v2') onStepAdvance?.()
+      if (v === 'v2') onBeatAdvance?.() // beat 4 → 5, triggers update animation
     }
   }
 
@@ -319,7 +330,7 @@ export default function StageView({ version = 'v1', onVersionChange, step, onSte
           <div className={`sv-preview ${bannerState === 'updating' ? 'sv-preview-updating' : ''}`}>
             <MockWebsite version={displayVersion} />
           </div>
-          <ChatRail onCardAction={handleCardAction} step={step} updateComplete={updateComplete} />
+          <ChatRail onCardAction={handleCardAction} beat={beat} onBeatAdvance={onBeatAdvance} />
         </div>
 
       </div>
