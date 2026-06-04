@@ -212,6 +212,44 @@
   text-overflow: ellipsis;
 }
 
+/* Step 2 guide inside the chat rail */
+.sv-rail-step-guide {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: #FFF9F0;
+  border-bottom: 1px solid #f5c518;
+  font-size: 12px;
+  color: #4a3000;
+}
+
+.sv-rail-step-num {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: #E8173A;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sv-rail-step-text {
+  flex: 1;
+  line-height: 1.3;
+}
+
+.sv-rail-step-arrow {
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .sv-rail-messages {
   flex: 1;
   overflow-y: auto;

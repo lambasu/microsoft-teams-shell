@@ -14,7 +14,7 @@ import {
   breakthuAgent,
   contextBriefs,
 } from '../data'
-import { TypingIndicator } from './common'
+import { TypingIndicator, DemoArrow } from './common'
 import ContextBriefPanel from './ContextBriefPanel'
 import MessageRow from './MessageRow'
 import SessionsRail from './SessionsRail'
@@ -131,10 +131,13 @@ export default function ChatView({
   const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
   const [p5Action, setP5Action] = useState(null) // null | 'confirmed' | 'skipped'
   const [p6State, setP6State] = useState(null) // null | 'prompted' | 'workflows' | 'agency'
-  // P7 — Lovable Stage View: auto-opens for contact 44; tracks which website
-  // version (v1 blue / v2 purple) the preview is showing.
-  const [showStageView, setShowStageView] = useState(activeChatId === 44)
+  // P7 — Lovable Stage View. p7Step drives the guided walkthrough:
+  //   1 → point user to "View Live Preview" on v1 card in main chat
+  //   2 → Stage View open; point user to "View Live Preview" on v2 card in rail
+  //   null → walkthrough complete
+  const [showStageView, setShowStageView] = useState(false)
   const [stageViewVersion, setStageViewVersion] = useState('v1')
+  const [p7Step, setP7Step] = useState(activeChatId === 44 ? 1 : null)
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -160,8 +163,9 @@ export default function ChatView({
     setGroupIntelAction(null)
     setP5Action(null)
     setP6State(null)
-    setShowStageView(activeChatId === 44)
+    setShowStageView(false)
     setStageViewVersion('v1')
+    setP7Step(activeChatId === 44 ? 1 : null)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -196,6 +200,15 @@ export default function ChatView({
     }
     clearNavIntent()
   }
+
+  // P7 step 1: scroll to message 9 (v1 completion card) so the target is visible.
+  useEffect(() => {
+    if (activeChatId !== 44 || p7Step !== 1) return
+    const t = setTimeout(() => {
+      document.querySelector('[data-message-id="9"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 350)
+    return () => clearTimeout(t)
+  }, [activeChatId, p7Step])
 
   useEffect(() => {
     if (highlightMessageId) {
@@ -920,6 +933,8 @@ export default function ChatView({
     if (type === 'open_stage_view') {
       setShowStageView(true)
       if (version) setStageViewVersion(version)
+      // Advance the guided walkthrough step
+      if (activeChatId === 44 && p7Step === 1) setP7Step(2)
       return
     }
     if (type !== 'open_in_agency') return
@@ -969,6 +984,8 @@ export default function ChatView({
         <StageView
           version={stageViewVersion}
           onVersionChange={setStageViewVersion}
+          step={p7Step}
+          onStepAdvance={() => setP7Step(null)}
           onClose={() => setShowStageView(false)}
         />
       )}
@@ -994,6 +1011,15 @@ export default function ChatView({
           activeTab={activeTab}
           onSelectTab={setActiveTab}
         />
+
+        {/* P7 step 1 guide — floats above the message list, points down toward the v1 card */}
+        {activeChatId === 44 && p7Step === 1 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 1 of 2</span>
+            <span className="p7-step-text">Click <strong>View Live Preview</strong> on Lovable's completion card below</span>
+            <span className="p7-step-arrow"><DemoArrow direction="down" size={16} /></span>
+          </div>
+        )}
 
         {activeTab === 'pinned' && contextBrief ? (
           <ContextBriefPanel brief={contextBrief} />

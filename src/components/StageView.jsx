@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { agentLogos } from '../shared/agentLogos'
 import { messagesByContact, contacts, currentUser } from '../data'
-import { Avatar } from './common'
+import { Avatar, DemoArrow } from './common'
 import './StageView.css'
 
 const CHAT_ID = 44
@@ -121,7 +121,7 @@ function MockWebsite({ version }) {
 
 // ── Chat rail ─────────────────────────────────────────────────────────────────
 // Renders the group chat messages from contact 44 in a narrow Teams-style rail.
-function ChatRail({ onCardAction }) {
+function ChatRail({ onCardAction, step }) {
   const messages = messagesByContact[CHAT_ID] || []
   const endRef = useRef(null)
   useEffect(() => { endRef.current?.scrollIntoView() }, [])
@@ -132,6 +132,14 @@ function ChatRail({ onCardAction }) {
         <div className="sv-rail-avatar" style={{ background: '#6264A7', fontSize: 11, fontWeight: 700, color: '#fff' }}>MC</div>
         <div className="sv-rail-chat-name">Morgan Collective website</div>
       </div>
+
+      {step === 2 && (
+        <div className="sv-rail-step-guide">
+          <span className="sv-rail-step-num">Step 2 of 2</span>
+          <span className="sv-rail-step-text">Click <strong>View Live Preview</strong> on the updated card below</span>
+          <span className="sv-rail-step-arrow"><DemoArrow direction="down" size={14} /></span>
+        </div>
+      )}
 
       <div className="sv-rail-messages">
         {messages.map((msg) => {
@@ -225,7 +233,7 @@ function ChatRail({ onCardAction }) {
 }
 
 // ── Stage View pop-out window ─────────────────────────────────────────────────
-export default function StageView({ version = 'v1', onVersionChange, onClose }) {
+export default function StageView({ version = 'v1', onVersionChange, step, onStepAdvance, onClose }) {
   // displayVersion is what's actually rendered in the website preview.
   // It lags behind `version` to allow the update animation to play first.
   const [displayVersion, setDisplayVersion] = useState('v1')
@@ -249,6 +257,7 @@ export default function StageView({ version = 'v1', onVersionChange, onClose }) 
   const handleCardAction = ({ type, version: v }) => {
     if (type === 'open_stage_view' && v) {
       onVersionChange?.(v)
+      if (v === 'v2') onStepAdvance?.()
     }
   }
 
@@ -305,7 +314,7 @@ export default function StageView({ version = 'v1', onVersionChange, onClose }) 
           <div className={`sv-preview ${bannerState === 'updating' ? 'sv-preview-updating' : ''}`}>
             <MockWebsite version={displayVersion} />
           </div>
-          <ChatRail onCardAction={handleCardAction} />
+          <ChatRail onCardAction={handleCardAction} step={step} />
         </div>
 
       </div>
