@@ -25,3 +25,5 @@ dist-ssr
 
 # Claude Code config (personal permissions, hooks, agents — not needed by forkers)
 .claude/
+.vercel
+.env*.local

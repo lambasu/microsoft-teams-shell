@@ -131,7 +131,10 @@ export default function ChatView({
   const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
   const [p5Action, setP5Action] = useState(null) // null | 'confirmed' | 'skipped'
   const [p6State, setP6State] = useState(null) // null | 'prompted' | 'workflows' | 'agency'
-  const [showStageView, setShowStageView] = useState(false)
+  // P7 — Lovable Stage View: auto-opens for contact 44; tracks which website
+  // version (v1 blue / v2 purple) the preview is showing.
+  const [showStageView, setShowStageView] = useState(activeChatId === 44)
+  const [stageViewVersion, setStageViewVersion] = useState('v1')
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -157,7 +160,8 @@ export default function ChatView({
     setGroupIntelAction(null)
     setP5Action(null)
     setP6State(null)
-    setShowStageView(false)
+    setShowStageView(activeChatId === 44)
+    setStageViewVersion('v1')
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -912,9 +916,10 @@ export default function ChatView({
   // and navigate there with the fix plan already loaded.
   // P7: "View Live Preview" card action — open Teams Stage View with the
   // Lovable-generated Morgan Collective site.
-  const handleCardAction = ({ type }) => {
+  const handleCardAction = ({ type, version }) => {
     if (type === 'open_stage_view') {
       setShowStageView(true)
+      if (version) setStageViewVersion(version)
       return
     }
     if (type !== 'open_in_agency') return
@@ -959,7 +964,13 @@ export default function ChatView({
   }
 
   return (
-    <div className="chat-view">
+    <div className={`chat-view${showStageView ? ' has-stage-view' : ''}`}>
+      {showStageView && (
+        <StageView
+          version={stageViewVersion}
+          onClose={() => setShowStageView(false)}
+        />
+      )}
       <div className="chat-view-main">
         <ChatHeader
           activeContact={activeContact}
@@ -1121,9 +1132,6 @@ export default function ChatView({
             setChannelThreadPostId(null)
           }}
         />
-      )}
-      {showStageView && (
-        <StageView onClose={() => setShowStageView(false)} />
       )}
     </div>
   )

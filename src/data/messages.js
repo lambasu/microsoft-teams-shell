@@ -1554,7 +1554,7 @@ export const messagesByContact = {
           ],
           footer: 'Lovable · Completed · 1 min ago',
           actions: [
-            { label: 'View Live Preview', type: 'open_stage_view', primary: true },
+            { label: 'View Live Preview', type: 'open_stage_view', version: 'v1', primary: true },
             'Request changes',
           ],
         },
@@ -1594,7 +1594,7 @@ export const messagesByContact = {
           ],
           footer: 'Lovable · Updated just now',
           actions: [
-            { label: 'View Live Preview', type: 'open_stage_view', primary: true },
+            { label: 'View Live Preview', type: 'open_stage_view', version: 'v2', primary: true },
             'Request changes',
           ],
         },

@@ -379,11 +379,12 @@ export default function MessageRow({ message, activeContact, onOpenThread, onTar
                         const label = typeof action === 'string' ? action : action.label
                         const isPrimary = typeof action === 'object' && action.primary
                         const actionType = typeof action === 'object' ? action.type : null
+                        const actionVersion = typeof action === 'object' ? action.version : null
                         return (
                           <button
                             key={j}
                             className={`card-action-btn${isPrimary ? ' card-action-btn-primary' : ''}`}
-                            onClick={actionType ? () => onCardAction?.({ type: actionType }) : undefined}
+                            onClick={actionType ? () => onCardAction?.({ type: actionType, version: actionVersion }) : undefined}
                           >
                             {label}
                           </button>
