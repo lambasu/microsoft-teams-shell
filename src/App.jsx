@@ -17,6 +17,7 @@ const PROTOTYPE_CHAT = {
   'earned-handoff-to-agency': 38,
   'facilitator-coordinates-agency': 39,
   'emoji-to-deploy': 40,
+  'lovable-stage-view': 44,
 }
 
 export default function App() {

@@ -61,6 +61,16 @@ const PROTOTYPES = [
     tag: 'E2E workflow',
     tagColor: '#8250DF',
   },
+  {
+    id: 'lovable-stage-view',
+    number: '07',
+    title: 'Lovable in group chat',
+    description:
+      'Team adds Lovable to a group chat and asks it to build their website. Lovable posts progress cards as it builds, then a completion card with a "View Live Preview" button. Click it to open Teams Stage View — a full-screen immersive preview. Request edits; Lovable updates the card in place.',
+    chat: 'Morgan Collective website',
+    tag: 'Stage View',
+    tagColor: '#FF3B8B',
+  },
 ]
 
 export default function PrototypeGallery({ onLaunch }) {

@@ -1469,4 +1469,138 @@ export const messagesByContact = {
     { id: 3, senderId: 15, text: 'this is the claim format mismatch in `validateGuestToken()` we flagged last sprint — it\'s in prod', time: 'Today 9:48 AM', reactions: [{ emoji: '😬', count: 2 }] },
     { id: 4, senderId: 1, text: 'react with 🐛 on Kevin\'s message to file it as a GitHub issue', time: 'Today 9:49 AM' },
   ],
+
+  // ── Morgan Collective website — Lovable stage view prototype (contact 44) ──
+  // Scenario: The MC team wants a proper website. Alex adds Lovable to the group
+  // chat. Lovable generates the site and posts progress Adaptive Cards. The final
+  // card has a "View Live Preview" button that opens Teams Stage View — a
+  // full-screen immersive preview visible to every member. Team members request
+  // edits; Lovable updates and posts a refreshed card.
+  44: [
+    { id: 1, senderId: 12, text: 'hey — should we finally get a proper website built for morgan collective? been on the list for months', time: 'Mon 11:15 AM' },
+    { id: 2, senderId: 15, text: 'yes please. the placeholder is embarrassing when clients look us up', time: 'Mon 11:17 AM', reactions: [{ emoji: '😅', count: 2 }] },
+    { id: 3, senderId: 30, text: '100% — let\'s do it this week. i have a new client call thursday and a real site would help', time: 'Mon 11:20 AM' },
+    { id: 4, senderId: 'me', text: 'agreed. adding lovable to the chat — let\'s just build it', time: 'Mon 11:22 AM' },
+    { id: 5, isSystem: true, text: 'Alex added Lovable to the conversation', time: 'Mon 11:22 AM' },
+    {
+      id: 6,
+      senderId: 'me',
+      text: [
+        { type: 'mention', name: '@Lovable' },
+        ' build us a landing page for Morgan Collective. AI-native product consultancy, 4 people, US-based. clean, modern, professional — consultancy feel not startup. sections: hero, services, team, CTA, footer',
+      ],
+      time: 'Mon 11:23 AM',
+    },
+    {
+      id: 7,
+      senderId: 43,
+      text: 'On it — spinning up your Morgan Collective site now.',
+      cards: [
+        {
+          accentColor: '#FF3B8B',
+          title: 'Morgan Collective — landing page',
+          subtitle: 'Generating from scratch · estimated 40 seconds',
+          badge: { text: 'Building', tone: 'amber' },
+          steps: [
+            { text: 'Analyze brief and define design direction', status: 'pending' },
+            { text: 'Scaffold layout: nav, hero, services, team, CTA, footer', status: 'pending' },
+            { text: 'Apply typography, color, and spacing system', status: 'pending' },
+            { text: 'Generate copy for each section', status: 'pending' },
+            { text: 'Run responsive checks across breakpoints', status: 'pending' },
+          ],
+          footer: 'Lovable · Building · Just now',
+        },
+      ],
+      time: 'Mon 11:23 AM',
+    },
+    {
+      id: 8,
+      senderId: 43,
+      text: 'Layout and structure done — applying design system now.',
+      cards: [
+        {
+          accentColor: '#FF3B8B',
+          title: 'Morgan Collective — landing page',
+          subtitle: 'Layout scaffold complete · applying design system',
+          badge: { text: 'Building', tone: 'amber' },
+          steps: [
+            { text: 'Analyze brief and define design direction', status: 'done' },
+            { text: 'Scaffold layout: nav, hero, services, team, CTA, footer', status: 'done' },
+            { text: 'Apply typography, color, and spacing system', status: 'running' },
+            { text: 'Generate copy for each section', status: 'pending' },
+            { text: 'Run responsive checks across breakpoints', status: 'pending' },
+          ],
+          footer: 'Lovable · Building · 30s ago',
+        },
+      ],
+      time: 'Mon 11:24 AM',
+    },
+    {
+      id: 9,
+      senderId: 43,
+      text: 'Your site is ready. 5 sections, responsive, clean consultancy aesthetic.',
+      cards: [
+        {
+          accentColor: '#FF3B8B',
+          title: 'Morgan Collective — v1 ready',
+          subtitle: 'Landing page · 5 sections · responsive',
+          badge: { text: 'Ready to preview', tone: 'green' },
+          steps: [
+            { text: 'Analyze brief and define design direction', status: 'done' },
+            { text: 'Scaffold layout: nav, hero, services, team, CTA, footer', status: 'done' },
+            { text: 'Apply typography, color, and spacing system', status: 'done' },
+            { text: 'Generate copy for each section', status: 'done' },
+            { text: 'Run responsive checks across breakpoints', status: 'done' },
+          ],
+          footer: 'Lovable · Completed · 1 min ago',
+          actions: [
+            { label: 'View Live Preview', type: 'open_stage_view', primary: true },
+            'Request changes',
+          ],
+        },
+      ],
+      time: 'Mon 11:25 AM',
+    },
+    { id: 10, senderId: 15, text: 'ok this is really solid. hero text is a bit generic though — can we make it more specific to what we actually do?', time: 'Mon 11:30 AM' },
+    { id: 11, senderId: 30, text: 'also the blue accent feels off for us. mc is more of a purple house', time: 'Mon 11:31 AM' },
+    {
+      id: 12,
+      senderId: 12,
+      text: [
+        { type: 'mention', name: '@Lovable' },
+        ' two changes: update the hero headline to \'AI-native product strategy for enterprise\' and swap the accent to purple (#6264A7)',
+      ],
+      time: 'Mon 11:32 AM',
+    },
+    { id: 13, senderId: 43, text: 'On it — applying both updates now.', time: 'Mon 11:32 AM' },
+    {
+      id: 14,
+      senderId: 43,
+      text: 'Done. Hero headline updated and accent swapped to MC purple.',
+      cards: [
+        {
+          accentColor: '#6264A7',
+          title: 'Morgan Collective — v2 ready',
+          subtitle: 'Updated: hero headline + accent color',
+          badge: { text: 'Updated', tone: 'green' },
+          sections: [
+            {
+              heading: 'Changes applied',
+              bullets: [
+                'Hero headline → "AI-native product strategy for enterprise"',
+                'Accent color → #6264A7 (MC purple)',
+              ],
+            },
+          ],
+          footer: 'Lovable · Updated just now',
+          actions: [
+            { label: 'View Live Preview', type: 'open_stage_view', primary: true },
+            'Request changes',
+          ],
+        },
+      ],
+      time: 'Mon 11:33 AM',
+    },
+    { id: 15, senderId: 'me', text: "that's it", time: 'Mon 11:34 AM', reactions: [{ emoji: '🔥', count: 3 }] },
+  ],
 }

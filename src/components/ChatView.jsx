@@ -23,6 +23,7 @@ import PromptSuggestions from './PromptSuggestions'
 import ChannelThreadRail from './ChannelThreadRail'
 import ChatHeader from './ChatHeader'
 import Compose from './Compose'
+import StageView from './StageView'
 import './ChatView.css'
 
 // Convert a channel post (root + replies) into the message shape MessageRow
@@ -130,6 +131,7 @@ export default function ChatView({
   const [groupIntelAction, setGroupIntelAction] = useState(null) // null | 'confirmed' | 'skipped'
   const [p5Action, setP5Action] = useState(null) // null | 'confirmed' | 'skipped'
   const [p6State, setP6State] = useState(null) // null | 'prompted' | 'workflows' | 'agency'
+  const [showStageView, setShowStageView] = useState(false)
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -155,6 +157,7 @@ export default function ChatView({
     setGroupIntelAction(null)
     setP5Action(null)
     setP6State(null)
+    setShowStageView(false)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -907,7 +910,13 @@ export default function ChatView({
 
   // P4: "Open this in Agency" card action — create a pre-seeded Agency session
   // and navigate there with the fix plan already loaded.
+  // P7: "View Live Preview" card action — open Teams Stage View with the
+  // Lovable-generated Morgan Collective site.
   const handleCardAction = ({ type }) => {
+    if (type === 'open_stage_view') {
+      setShowStageView(true)
+      return
+    }
     if (type !== 'open_in_agency') return
     const nowStr = nowTimeStr()
     const sessionId = `s36-hotfix-${Date.now()}`
@@ -1112,6 +1121,9 @@ export default function ChatView({
             setChannelThreadPostId(null)
           }}
         />
+      )}
+      {showStageView && (
+        <StageView onClose={() => setShowStageView(false)} />
       )}
     </div>
   )

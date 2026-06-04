@@ -58,6 +58,8 @@ export const contacts = [
   { id: 40, name: 'Northwind bug triage', initials: 'NB', color: '#CA5010', status: null, isGroup: true, memberCount: 5 },
   { id: 41, name: 'GitHub Copilot', initials: 'GC', color: '#6E40C9', status: null, isAgent: true, description: 'AI pair programmer — writes fixes, opens PRs, and reviews code' },
   { id: 42, name: 'Workflows', initials: 'WF', color: '#0078D4', status: null, isAgent: true, description: 'Microsoft Teams automation — connects apps and automates processes' },
+  { id: 43, name: 'Lovable', initials: 'Lv', color: '#FF3B8B', status: null, isAgent: true, logo: 'lovable', description: 'AI website builder — generate and iterate on full-stack web apps from prompts' },
+  { id: 44, name: 'Morgan Collective website', initials: 'MC', color: '#6264A7', status: null, isGroup: true, memberCount: 4 },
 ]
 
 // Teams the user belongs to. Each team has a list of channels (by contact id,
@@ -135,6 +137,7 @@ export const chatList = [
   { contactId: 31 },
   { contactId: 32 },
   { contactId: 33 },
+  { contactId: 44, bold: true },
 ]
 
 // Channels inherit their parent team's avatar — a channel in the chat list
