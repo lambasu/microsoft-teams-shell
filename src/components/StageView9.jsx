@@ -359,6 +359,14 @@ export default function StageView9({ threadMessages, threadTyping, beat, onUpdat
           </div>
         </div>
 
+        {/* Step 4 guide */}
+        {beat === 4 && !clickMenu && !compose && (
+          <div className="sv9-step-guide">
+            <span className="sv9-step-num">Step 4 — </span>
+            <span className="sv9-step-text">Click the headline in the preview, select <strong>Rewrite selected text</strong>, then send the pre-filled @Lovable message</span>
+          </div>
+        )}
+
         {/* Update banner */}
         {bannerState && (
           <div className={`sv9-banner sv9-banner-${bannerState}`}>

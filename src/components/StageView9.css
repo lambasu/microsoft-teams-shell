@@ -102,6 +102,21 @@
 .sv9-presence-dot-away      { background: #C19C00; }
 .sv9-presence-dot-busy      { background: #C50F1F; }
 
+/* ── Step guide ───────────────────────────────────────────────────────────── */
+.sv9-step-guide {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 7px 16px;
+  background: #EEF0FF;
+  border-bottom: 1px solid #D8DBFF;
+  font-size: 12px;
+  color: #242424;
+}
+.sv9-step-num { font-weight: 700; color: #5B5FC7; white-space: nowrap; margin-right: 4px; }
+.sv9-step-text strong { color: #5B5FC7; }
+
 /* ── Banner ───────────────────────────────────────────────────────────────── */
 .sv9-banner {
   flex-shrink: 0;
