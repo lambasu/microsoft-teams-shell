@@ -1340,21 +1340,21 @@ export default function ChatView({
         {/* P9 guides */}
         {activeChatId === 56 && p9Beat === 1 && (
           <div className="p7-step-guide">
-            <span className="p7-step-num">Step 1 of 3</span>
+            <span className="p7-step-num">Step 1 of 4</span>
             <span className="p7-step-text">The team @mentioned Lovable to build a landing page from the conversation</span>
             <button className="p7-step-next" onClick={() => { setP9Beat(2); setThreadRailOpen(true) }}>Next →</button>
           </div>
         )}
         {activeChatId === 56 && p9Beat === 2 && (
           <div className="p7-step-guide">
-            <span className="p7-step-num">Step 2 of 3</span>
+            <span className="p7-step-num">Step 2 of 4</span>
             <span className="p7-step-text">Lovable read the conversation — <strong>Approve</strong> the plan in the thread</span>
             <span className="p7-step-arrow"><DemoArrow direction="right" size={16} /></span>
           </div>
         )}
         {activeChatId === 56 && p9Beat === 3 && (
           <div className="p7-step-guide">
-            <span className="p7-step-num">Step 3 of 3</span>
+            <span className="p7-step-num">Step 3 of 4</span>
             <span className="p7-step-text">Prototype ready — click <strong>Open in Stage View</strong> in the thread</span>
             <span className="p7-step-arrow"><DemoArrow direction="right" size={16} /></span>
           </div>
