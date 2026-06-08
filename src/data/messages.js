@@ -1754,4 +1754,24 @@ export const messagesByContact = {
       }],
     },
   ],
+
+  // ── Agents platform sprint — P9 Lovable thread-first prototyping ──────────
+  // Team needs a landing page for Agents Platform v2 before the April 25
+  // all-hands. They ask Lovable to prototype one based on the conversation.
+  // Lovable responds in a thread (not main chat) with a plan, the user approves,
+  // and Lovable builds a prototype accessible via Stage View.
+  56: [
+    { id: 1, senderId: 12, text: "we need a landing page for the agents platform v2 milestone review — something clear for the april 25 all-hands. stakeholders need to see it before the go/no-go", time: '9:02 AM' },
+    { id: 2, senderId: 15, text: "agreed. needs to show what the platform actually does — key capabilities, who it's for, and a way to request early access", time: '9:05 AM' },
+    { id: 3, senderId: 1, text: "can we get something before thursday? even a rough prototype helps. stakeholders are asking and I don't have anything to point them to", time: '9:07 AM' },
+    { id: 4, senderId: 'me', text: "lovable can prototype something in minutes from our conversation. going to ask it now — no need to write a separate brief", time: '9:09 AM' },
+    // msg 5 is the @Lovable message that starts the thread.
+    // The replies seed the thread indicator pill in the main chat view.
+    { id: 5, senderId: 'me', text: [
+      { type: 'mention', name: 'Lovable' },
+      ' read the conversation above and build a landing page for Northwind Agents Platform v2. base it on what the team described.',
+    ], time: '9:10 AM',
+      replies: [{ id: 'p9-r0', senderId: 43, text: "Here's my build plan." }],
+    },
+  ],
 }

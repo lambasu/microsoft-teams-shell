@@ -22,10 +22,12 @@ import SessionsRail from './SessionsRail'
 import AgentsRail from './AgentsRail'
 import PromptSuggestions from './PromptSuggestions'
 import ChannelThreadRail from './ChannelThreadRail'
+import P9ThreadRail from './P9ThreadRail'
 import ChatHeader from './ChatHeader'
 import Compose from './Compose'
 import StageView from './StageView'
 import StageView8 from './StageView8'
+import StageView9 from './StageView9'
 import './ChatView.css'
 
 // Convert a channel post (root + replies) into the message shape MessageRow
@@ -154,6 +156,20 @@ export default function ChatView({
   //   8 → text update applied; v3 headline shown
   const [p8Beat, setP8Beat] = useState(activeChatId === 55 ? 1 : null)
   const showStageView8 = activeChatId === 55 && p8Beat !== null && p8Beat >= 4
+  // P9 — Agents platform sprint (Lovable thread-first prototyping).
+  //   1 → msgs 1-4 (team discussion); guide Next →
+  //   2 → msgs 1-6 (@Lovable + reading history); guide Next →
+  //   3 → typing + plan card; guide Click Approve ↓
+  //   4 → approved; typing + ready card; guide Click Open in Stage View ↓
+  //   5 → Stage View open; click on headline to edit
+  //   6 → (in stage view) click menu visible
+  //   7 → (in stage view) compose pre-filled
+  //   8 → text rewrite applied; v2 headline shown
+  const [p9Beat, setP9Beat] = useState(activeChatId === 56 ? 1 : null)
+  const [p9ThreadMessages, setP9ThreadMessages] = useState([])
+  const [p9ThreadTyping, setP9ThreadTyping] = useState(false)
+  const showStageView9 = activeChatId === 56 && p9Beat !== null && p9Beat >= 4
+  const p9RootMessage = activeChatId === 56 ? (messagesByContact[56] || []).find(m => m.id === 5) : null
   const messagesEndRef = useRef(null)
 
   // Reset per-chat ephemeral state when activeChatId changes. Using the
@@ -182,6 +198,9 @@ export default function ChatView({
     setP7Beat(activeChatId === 44 ? 1 : null)
     setStageViewVersion('v1')
     setP8Beat(activeChatId === 55 ? 1 : null)
+    setP9Beat(activeChatId === 56 ? 1 : null)
+    setP9ThreadMessages([])
+    setP9ThreadTyping(false)
     setMainTyping(null)
     const intentMatches = navIntent && navIntent.chatId === activeChatId
     const intentHasSession = intentMatches && 'sessionId' in navIntent
@@ -270,6 +289,78 @@ export default function ChatView({
     }, 2200)
     return () => clearTimeout(t)
   }, [activeChatId, p8Beat])
+
+  // P9 beat 2: thread is open, Lovable types → plan card in thread only (not main chat).
+  useEffect(() => {
+    if (activeChatId !== 56 || p9Beat !== 2) return
+    setP9ThreadTyping(true)
+    const t = setTimeout(() => {
+      setP9ThreadTyping(false)
+      const nowStr = nowTimeStr()
+      setP9ThreadMessages([{
+        id: 't1', senderId: 43,
+        text: "I read your conversation. Here's my build plan.",
+        time: nowStr,
+        cards: [{
+          accentColor: '#FF3B8B',
+          title: 'Agents Platform v2 — build plan',
+          badge: { text: 'Pending approval', tone: 'neutral' },
+          steps: [
+            { text: 'Hero — outcome-led headline, subheadline, CTA', status: 'pending' },
+            { text: 'Feature cards — Instant context, Agentic workflows, In-chat review', status: 'pending' },
+            { text: 'Agent activity preview in hero', status: 'pending' },
+            { text: 'Early access CTA section', status: 'pending' },
+            { text: 'Footer — nav + links', status: 'pending' },
+          ],
+          actions: [
+            { label: 'Approve', primary: true, type: 'p9_approve_plan' },
+            'Request changes',
+          ],
+        }],
+      }])
+    }, 2200)
+    return () => clearTimeout(t)
+  }, [activeChatId, p9Beat])
+
+  // P9 beat 3: after Approve — Lovable types → ready card with presence in thread only.
+  useEffect(() => {
+    if (activeChatId !== 56 || p9Beat !== 3) return
+    setP9ThreadTyping(true)
+    const t = setTimeout(() => {
+      setP9ThreadTyping(false)
+      const nowStr = nowTimeStr()
+      setP9ThreadMessages(prev => [
+        ...prev,
+        {
+          id: 't3', senderId: 43,
+          text: 'Prototype ready. Open it in Stage View to review.',
+          time: nowStr,
+          cards: [{
+            accentColor: '#FF3B8B',
+            title: 'Agents Platform v2 — v1 live',
+            badge: { text: 'Ready', tone: 'green' },
+            steps: [
+              { text: 'Hero section + headline', status: 'done' },
+              { text: 'Feature cards — 3 pillars', status: 'done' },
+              { text: 'Agent activity preview', status: 'done' },
+              { text: 'Early access CTA', status: 'done' },
+              { text: 'Footer', status: 'done' },
+            ],
+            presence: {
+              viewers: [
+                { name: 'Rachel Thompson', initials: 'RT', color: '#C19C00', status: 'available' },
+                { name: 'Kevin Park', initials: 'KP', color: '#0078D4', status: 'away' },
+                { name: 'Sarah Chen', initials: 'SC', color: '#038387', status: 'available' },
+              ],
+              label: '3 members viewing',
+            },
+            actions: [{ label: 'Open in Stage View', primary: true, type: 'p9_open_stage_view' }],
+          }],
+        },
+      ])
+    }, 2400)
+    return () => clearTimeout(t)
+  }, [activeChatId, p9Beat])
 
   useEffect(() => {
     if (highlightMessageId) {
@@ -1016,6 +1107,21 @@ export default function ChatView({
       if (activeChatId === 55 && p8Beat === 3) setP8Beat(4)
       return
     }
+    if (type === 'p9_approve_plan') {
+      if (activeChatId === 56 && p9Beat === 2) {
+        const nowStr = nowTimeStr()
+        setP9ThreadMessages(prev => [
+          ...prev,
+          { id: 't2', senderId: 'me', text: "Approved — let's build it", time: nowStr },
+        ])
+        setP9Beat(3)
+      }
+      return
+    }
+    if (type === 'p9_open_stage_view') {
+      if (activeChatId === 56 && p9Beat === 3) setP9Beat(4)
+      return
+    }
     if (type !== 'open_in_agency') return
     const nowStr = nowTimeStr()
     const sessionId = `s36-hotfix-${Date.now()}`
@@ -1055,6 +1161,42 @@ export default function ChatView({
       sourceChatId: activeChatId,
     }, seedMessages)
     onSelectChat(36, { showSessions: true, sessionId })
+  }
+
+  // P9: user sends from the Stage View thread rail (click-to-edit flow).
+  // Posts the message into the thread (p9ThreadMessages), shows typing in the
+  // rail, then Lovable replies in the thread only — not the main chat.
+  const handleP9SendMessage = (text) => {
+    const nowStr = nowTimeStr()
+    const parts = text.match(/^(@Lovable\s*)/i)
+    const messageText = parts
+      ? [{ type: 'mention', name: 'Lovable' }, text.slice(parts[1].length)]
+      : text
+    setP9ThreadMessages(prev => [
+      ...prev,
+      { id: `p9-u-${Date.now()}`, senderId: 'me', text: messageText, time: nowStr },
+    ])
+    setP9ThreadTyping(true)
+    setTimeout(() => {
+      setP9ThreadTyping(false)
+      const doneStr = nowTimeStr()
+      setP9ThreadMessages(prev => [
+        ...prev,
+        {
+          id: `p9-lov-${Date.now()}`,
+          senderId: 43,
+          text: 'Done! Rewrote the hero headline.',
+          time: doneStr,
+          cards: [{
+            accentColor: '#FF3B8B',
+            title: 'Headline updated',
+            badge: { text: 'Done', tone: 'green' },
+            steps: [{ text: 'Hero headline rewritten', status: 'done' }],
+          }],
+        },
+      ])
+      setP9Beat(8)
+    }, 2200)
   }
 
   // P8: user sends a message from the Stage View rail (text selection flow).
@@ -1122,6 +1264,16 @@ export default function ChatView({
           onClose={() => setP8Beat(8)}
         />
       )}
+      {showStageView9 && (
+        <StageView9
+          threadMessages={p9ThreadMessages}
+          threadTyping={p9ThreadTyping}
+          beat={p9Beat}
+          onUpdateComplete={() => setP9Beat(prev => (prev < 8 ? 8 : prev))}
+          onSendMessage={handleP9SendMessage}
+          onClose={() => setP9Beat(8)}
+        />
+      )}
       <div className="chat-view-main">
         <ChatHeader
           activeContact={activeContact}
@@ -1182,6 +1334,29 @@ export default function ChatView({
             <span className="p7-step-num">Step 3 of 5</span>
             <span className="p7-step-text">Lovable is building — click <strong>Open in Stage View</strong> once it's ready</span>
             <span className="p7-step-arrow"><DemoArrow direction="down" size={16} /></span>
+          </div>
+        )}
+
+        {/* P9 guides */}
+        {activeChatId === 56 && p9Beat === 1 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 1 of 3</span>
+            <span className="p7-step-text">The team @mentioned Lovable to build a landing page from the conversation</span>
+            <button className="p7-step-next" onClick={() => { setP9Beat(2); setThreadRailOpen(true) }}>Next →</button>
+          </div>
+        )}
+        {activeChatId === 56 && p9Beat === 2 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 2 of 3</span>
+            <span className="p7-step-text">Lovable read the conversation — <strong>Approve</strong> the plan in the thread</span>
+            <span className="p7-step-arrow"><DemoArrow direction="right" size={16} /></span>
+          </div>
+        )}
+        {activeChatId === 56 && p9Beat === 3 && (
+          <div className="p7-step-guide">
+            <span className="p7-step-num">Step 3 of 3</span>
+            <span className="p7-step-text">Prototype ready — click <strong>Open in Stage View</strong> in the thread</span>
+            <span className="p7-step-arrow"><DemoArrow direction="right" size={16} /></span>
           </div>
         )}
 
@@ -1248,6 +1423,11 @@ export default function ChatView({
                     const p8MaxIds = [0, 3, 6, 6, 11, 12, Infinity, Infinity, Infinity]
                     const maxId = p8MaxIds[Math.min(p8Beat, 8)] ?? Infinity
                     if (typeof msg.id === 'number' && msg.id > maxId) return false
+                  }
+                  // P9: reveal messages progressively by beat
+                  if (activeChatId === 56 && p9Beat !== null) {
+                    // beat 1 → msgs 1-4; beat 2+ → all static msgs
+                    if (typeof msg.id === 'number' && p9Beat === 1 && msg.id > 4) return false
                   }
                   return true
                 })
@@ -1327,7 +1507,18 @@ export default function ChatView({
           onClose={() => setShowAgents(false)}
         />
       )}
-      {threadRailOpen && (
+      {threadRailOpen && activeChatId === 56 ? (
+        <P9ThreadRail
+          rootMessage={p9RootMessage}
+          messages={p9ThreadMessages}
+          isTyping={p9ThreadTyping}
+          onCardAction={handleCardAction}
+          onClose={() => {
+            setThreadRailOpen(false)
+            setChannelThreadPostId(null)
+          }}
+        />
+      ) : threadRailOpen ? (
         <ChannelThreadRail
           posts={isChannel ? channelPosts : groupThreadablePosts}
           initialPostId={channelThreadPostId}
@@ -1337,7 +1528,7 @@ export default function ChatView({
             setChannelThreadPostId(null)
           }}
         />
-      )}
+      ) : null}
     </div>
   )
 }

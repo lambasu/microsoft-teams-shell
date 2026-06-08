@@ -19,6 +19,7 @@ const PROTOTYPE_CHAT = {
   'emoji-to-deploy': 40,
   'lovable-stage-view': 44,
   'lovable-live-edit': 55,
+  'lovable-thread-prototype': 56,
 }
 
 export default function App() {
@@ -362,6 +363,41 @@ export default function App() {
             message. Compare the two issue cards — Agency's includes{' '}
             <strong>Context passed</strong>, Workflows doesn't. Both paths
             converge at GitHub Copilot and play out the same way from there.
+          </p>
+        </FreModal>
+      )}
+      {showFre && selectedPrototype === 'lovable-thread-prototype' && (
+        <FreModal
+          title="Lovable — thread-first prototyping"
+          subtitle="Ask Lovable to prototype an app from a group chat conversation. It reads the thread, plans in a reply, builds in Stage View, and takes edits without leaving the chat."
+          onDismiss={dismissFre}
+        >
+          <h3 className="fre-section-title">The flow</h3>
+          <p>
+            The team discusses what they need in a group chat. One @mention
+            triggers Lovable to read the full conversation history and respond
+            with a structured build plan — in a thread, not the main chat.
+            Once approved, it builds and opens the prototype in Teams Stage View.
+          </p>
+
+          <h3 className="fre-section-title">What's new</h3>
+          <p>
+            Stage View opens with the live prototype on the left and the{' '}
+            <strong>thread</strong> on the right — so the full conversation
+            context (plan, approval, build updates) is visible alongside the
+            prototype. Click any text in the app to get an inline edit menu.
+            Select <strong>Rewrite selected text</strong> — it drops a composed
+            @Lovable message into the chat box. Send it, and Lovable updates the
+            prototype and replies in the thread only.
+          </p>
+
+          <h3 className="fre-section-title">What to look for</h3>
+          <p>
+            Open <strong>Agents platform sprint</strong>. Follow the steps:
+            approve Lovable's plan, open Stage View, click the hero headline,
+            select <strong>Rewrite selected text</strong>, and send. Watch
+            Lovable reply in the thread rail and update the headline in the
+            preview — without touching the main group chat.
           </p>
         </FreModal>
       )}

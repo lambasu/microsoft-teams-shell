@@ -10,10 +10,11 @@ Users will ask you to build, modify, or extend prototype features on top of this
 
 ## REQUIRED READING — Before Any Change
 
-**At the start of every task that touches the experience (UI, copy, data, flows, styling), read these two files first:**
+**At the start of every task that touches the experience (UI, copy, data, flows, styling), read these files first:**
 
 1. **`PERSONA.md`** — the user's role, active projects, collaborators, and communication style. Any new messages, chat names, session titles, agent replies, or draft text must sound like it came from this person's Teams. Reuse existing names, tickets, and surface references instead of inventing generic placeholders.
 2. **`DESIGN_GUIDE.md`** — color tokens, spacing, typography, icon style, card patterns, and surface decisions. Any visual change (colors, layout, new component, card anatomy) must conform to what's documented here.
+3. **`PROTOTYPE_PATTERNS.md`** — recurring UX and data patterns that have worked well across prototypes: stage-based agent progress cards, presence bars, animated cursors, pinned tab panel types, card action types, system messages, proposal badges, and the scenario setup checklist. Always check here before building a new component or card flow.
 
 These are not optional references — they are the guardrails that keep prototypes on-brand and on-voice. If the user provides new persona details or design guidance during a task, **update the corresponding file** in the same change so future work stays in sync.
 

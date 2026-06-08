@@ -81,6 +81,16 @@ const PROTOTYPES = [
     tag: 'Stage View · Live Edit',
     tagColor: '#FF3B8B',
   },
+  {
+    id: 'lovable-thread-prototype',
+    number: '09',
+    title: 'Lovable — thread-first prototyping',
+    description:
+      'Team discusses what to build in chat. One @mention triggers Lovable to read the conversation history and respond in a thread with a build plan. Approved → Lovable builds. Stage View opens with the prototype on the left and the thread on the right. Click any text in the app to get an edit menu — select "Rewrite selected text" to drop an @Lovable message in the compose box. Send it; Lovable replies in the thread only.',
+    chat: 'Agents platform sprint',
+    tag: 'Stage View · Thread',
+    tagColor: '#5B5FC7',
+  },
 ]
 
 export default function PrototypeGallery({ onLaunch }) {
