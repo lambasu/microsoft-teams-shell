@@ -13,6 +13,7 @@ import {
   pollyAgent,
   breakthuAgent,
   contextBriefs,
+  sidePanelShareMessage,
 } from '../data'
 import { TypingIndicator, DemoArrow } from './common'
 import ContextBriefPanel from './ContextBriefPanel'
@@ -23,6 +24,8 @@ import AgentsRail from './AgentsRail'
 import PromptSuggestions from './PromptSuggestions'
 import ChannelThreadRail from './ChannelThreadRail'
 import P9ThreadRail from './P9ThreadRail'
+import CopilotSidePanel from './CopilotSidePanel'
+import AsanaSidePanel from './AsanaSidePanel'
 import ChatHeader from './ChatHeader'
 import Compose from './Compose'
 import StageView from './StageView'
@@ -59,6 +62,8 @@ function parseDraft(d) {
 // CLAUDE.md for policy on this flow.
 const JIRA_FLOW_ENABLED = false
 
+const nowTimeStr = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+
 const jiraScript = [
   {
     text: 'You have 1 blocker for the April 25 milestone — the PR is in review with all signoffs and CI passing. Want me to merge it?',
@@ -92,6 +97,9 @@ export default function ChatView({
   dynamicSessionMessages,
   navIntent,
   clearNavIntent,
+  // 'copilot' | 'asana' | null — private side panel variant for chats
+  // flagged `sidePanelMock` (see ?mock= in App.jsx).
+  sidePanelVariant = null,
 }) {
   const activeContact = contacts.find((c) => c.id === activeChatId)
   const baseMessages = messagesByContact[activeChatId] || []
@@ -129,6 +137,8 @@ export default function ChatView({
   const [threadRailOpen, setThreadRailOpen] = useState(false)
   const [highlightMessageId, setHighlightMessageId] = useState(null)
   const [activeTab, setActiveTab] = useState('chat')
+  const [sidePanelOpen, setSidePanelOpen] = useState(true)
+  const [sidePanelShared, setSidePanelShared] = useState(false)
   // Track whether targeted messages have been acted on (hide them once actioned).
   // P3 (chat 35): group intelligence / Jira confirm.
   // P5 (chat 39): Facilitator → Agency PR coordination.
@@ -260,6 +270,7 @@ export default function ChatView({
   useEffect(() => {
     if (activeChatId !== 55 || p8Beat !== 3) return
     const chatId = 55
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat
     setMainTyping({ chatId, contactId: 43 })
     const t = setTimeout(() => {
       setMainTyping(prev => prev?.chatId === chatId ? null : prev)
@@ -293,6 +304,7 @@ export default function ChatView({
   // P9 beat 2: thread is open, Lovable types → plan card in thread only (not main chat).
   useEffect(() => {
     if (activeChatId !== 56 || p9Beat !== 2) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat
     setP9ThreadTyping(true)
     const t = setTimeout(() => {
       setP9ThreadTyping(false)
@@ -325,6 +337,7 @@ export default function ChatView({
   // P9 beat 3: after Approve — Lovable types → ready card with presence in thread only.
   useEffect(() => {
     if (activeChatId !== 56 || p9Beat !== 3) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat
     setP9ThreadTyping(true)
     const t = setTimeout(() => {
       setP9ThreadTyping(false)
@@ -409,6 +422,17 @@ export default function ChatView({
   const messages = [...displayBaseMessages, ...(extraMessages[canvasKey] || [])]
   // Messages with `replies` arrays power the threads list/detail view in
   // group chats. Channels use channelPosts for the same purpose.
+  const hasSidePanel = !!(sidePanelVariant && activeContact.sidePanelMock)
+  const showSidePanel = hasSidePanel && sidePanelOpen
+  // Explicit share — the only path from the private panel into the group chat.
+  const shareSidePanelToChat = () => {
+    if (sidePanelShared) return
+    setSidePanelShared(true)
+    setExtraMessages((prev) => ({
+      ...prev,
+      [canvasKey]: [...(prev[canvasKey] || []), { ...sidePanelShareMessage, id: 'side-panel-share', time: '9:53 AM' }],
+    }))
+  }
   const groupThreadablePosts = isGroup ? messages.filter((m) => m.replies?.length > 0) : []
 
   const activeSession = hasSessions && sessions[activeChatId]?.find((s) => s.id === activeSessionId)
@@ -478,7 +502,6 @@ export default function ChatView({
     })
   }
 
-  const nowTimeStr = () => new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
 
   const selectRailAgent = (agent) => {
     setSelectedRailAgent(agent)
@@ -1030,7 +1053,6 @@ export default function ChatView({
     // P6 Workflows path
     if (action.action === 'p6_workflows') {
       setP6State('workflows')
-      const nowStr = nowTimeStr()
       setExtraMessages(prev => ({
         ...prev,
         [chatId]: [...(prev[chatId] || []),
@@ -1295,6 +1317,11 @@ export default function ChatView({
           pinnedTab={pinnedTab}
           activeTab={activeTab}
           onSelectTab={setActiveTab}
+          sidePanelButton={hasSidePanel ? {
+            kind: sidePanelVariant,
+            active: showSidePanel,
+            onClick: () => setSidePanelOpen((v) => !v),
+          } : undefined}
         />
 
         {/* P7 beat 1 guide — team planning phase, Next advances to show Lovable's v1 output */}
@@ -1485,6 +1512,20 @@ export default function ChatView({
         </div>
       </div>
 
+      {showSidePanel && sidePanelVariant === 'copilot' && (
+        <CopilotSidePanel
+          onClose={() => setSidePanelOpen(false)}
+          onShareToChat={shareSidePanelToChat}
+          shared={sidePanelShared}
+        />
+      )}
+      {showSidePanel && sidePanelVariant === 'asana' && (
+        <AsanaSidePanel
+          onClose={() => setSidePanelOpen(false)}
+          onShareToChat={shareSidePanelToChat}
+          shared={sidePanelShared}
+        />
+      )}
       {showSessions && (
         <SessionsRail
           sessions={sessions[activeChatId] || []}

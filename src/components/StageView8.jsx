@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { Fragment, useState, useEffect, useRef } from 'react'
 import { agentLogos } from '../shared/agentLogos'
 import { contacts, currentUser } from '../data'
 import { Avatar, DemoArrow } from './common'
@@ -101,9 +101,9 @@ function MockWebsite8({ version, isEditing }) {
   )
 
   const sections = {
-    features: <FeaturesSection key="features" />,
-    howItWorks: <HowItWorksSection key="how" />,
-    pricing: <PricingSection key="pricing" />,
+    features: <Fragment key="features">{FeaturesSection()}</Fragment>,
+    howItWorks: <Fragment key="how">{HowItWorksSection()}</Fragment>,
+    pricing: <Fragment key="pricing">{PricingSection()}</Fragment>,
   }
 
   return (
@@ -318,6 +318,7 @@ export default function StageView8({ messages, beat, onBeatAdvance, onUpdateComp
   // Beat 6: live editing animation v1 → v2
   useEffect(() => {
     if (beat !== 6) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat kicks off a timed animation
     setBannerState('updating')
     setIsEditing(true)
     const t = setTimeout(() => {
@@ -334,6 +335,7 @@ export default function StageView8({ messages, beat, onBeatAdvance, onUpdateComp
   // Beat 8: flash headline to v3 (text selection update applied)
   useEffect(() => {
     if (beat !== 8) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat kicks off a timed animation
     setDisplayVersion('v3')
   }, [beat])
 

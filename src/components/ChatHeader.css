@@ -25,6 +25,12 @@
   align-items: center;
   gap: 6px;
   margin-left: 4px;
+  /* When a side panel narrows the canvas, trailing tabs wrap onto a hidden
+     second line instead of pushing the right-side actions out of view. */
+  min-width: 56px;
+  flex-wrap: wrap;
+  height: 48px;
+  overflow: hidden;
 }
 
 .chat-view-tab {
@@ -42,6 +48,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 20px;
+  flex-shrink: 0;
 }
 
 .chat-view-tab:hover {
@@ -177,4 +184,46 @@
 .header-action-btn.icon-button-active:hover {
   background: rgba(98, 100, 167, 0.12);
   color: #6264A7;
+}
+
+/* Side panel toggle (Copilot / app) — icon + label pill. Active state uses
+   the Teams purple tint, matching other toggled header actions. */
+.header-app-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid transparent;
+  padding: 4px 10px 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: #424242;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.header-app-btn:hover {
+  background: #F0F0F0;
+  color: #242424;
+}
+
+.header-app-btn-active,
+.header-app-btn-active:hover {
+  background: rgba(98, 100, 167, 0.08);
+  border-color: rgba(98, 100, 167, 0.35);
+  color: #6264A7;
+}
+
+.header-app-btn-icon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+}
+
+/* Docked side panel narrows the canvas — collapse "Meet now" to icon-only,
+   as Teams does at narrow widths, so the action cluster stays visible. */
+.chat-header-row-compact .meet-now-label {
+  display: none;
 }

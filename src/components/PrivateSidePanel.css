@@ -1,0 +1,129 @@
+/* Private side panel — docked to the right of the chat canvas. Matches the
+   agents-rail geometry (380px, 56px header, #E8E8E8 dividers) but uses a white
+   surface so hosted content (cards, app UI) reads like the main canvas. */
+.private-side-panel {
+  width: 380px;
+  min-width: 380px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border-left: 1px solid #E8E8E8;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.04);
+}
+
+.psp-header {
+  height: 56px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 12px 0 16px;
+  border-bottom: 1px solid #E8E8E8;
+}
+
+.psp-header-icon {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.psp-header-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.psp-header-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.psp-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #242424;
+  line-height: 18px;
+}
+
+.psp-subtitle {
+  font-size: 11px;
+  color: #616161;
+  line-height: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.psp-header-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.psp-icon-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  color: #616161;
+}
+
+.psp-icon-btn:hover {
+  background: #F0F0F0;
+  color: #242424;
+}
+
+/* "Only you can see this" strip — same lock + 11px #616161 treatment as
+   PrivateDisclaimer, promoted to a full-width band under the header. */
+.psp-private-strip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  background: #F5F5F5;
+  border-bottom: 1px solid #E8E8E8;
+  font-size: 11px;
+  line-height: 15px;
+  color: #616161;
+}
+
+.psp-private-strip svg {
+  flex-shrink: 0;
+}
+
+.psp-private-strip strong {
+  font-weight: 600;
+  color: #424242;
+}
+
+.psp-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.psp-footer {
+  flex-shrink: 0;
+  border-top: 1px solid #E8E8E8;
+}
+
+/* Asana-style status pill — shared by CopilotSidePanel + AsanaSidePanel. */
+.asana-pill {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  vertical-align: 1px;
+}
+
+.asana-pill-review { background: #FCEFD1; color: #8A5A00; }
+.asana-pill-new { background: #E2F2EA; color: #2E7350; }

@@ -185,7 +185,19 @@ Text: `"Powered by [mechanism] · [What it enables] · This is a feature proposa
 
 ---
 
-## 8. Scenario Setup Checklist
+## 8. Private Side Panel (Copilot vs. App-direct)
+
+Dock a private panel next to a group chat to compare "agent orchestrates the app" against "app opens directly". See `PrivateSidePanel`, `CopilotSidePanel`, `AsanaSidePanel`, and `?mock=copilot | asana | compare`.
+
+- Flag the chat contact with `sidePanelMock: true`; pass `sidePanelVariant` to `ChatView`.
+- Both variants must reflect the **same** outcome (`asanaChanges` in `data/sidePanel.js`) so the comparison is apples-to-apples.
+- Copilot variant: user prompt with a context chip for the chat → "Used <App> plugin" chip → `ChainOfThought` (`defaultExpanded`) → app-branded result card with **Open in <App>**, **Undo**, **Share to chat** → follow-up chips → "Message Copilot" compose.
+- App variant: app-owned header/tabs/dashboard, footer with **Open in <App> ↗** and **Share to chat**.
+- **Share to chat** is the only path into the group chat; it appends a card from the user and flips to a "Shared to chat" confirmation.
+
+---
+
+## 9. Scenario Setup Checklist
 
 Before writing a line of component code, set up the narrative data:
 

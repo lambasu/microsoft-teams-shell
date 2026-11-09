@@ -63,6 +63,9 @@ export const contacts = [
   { id: 50, name: 'Morgan Collective site review', initials: 'MC', color: '#6264A7', status: null, isGroup: true, memberCount: 4, livePreviewPanel: true },
   { id: 55, name: 'Beacon site', initials: 'BS', color: '#0078D4', status: null, isGroup: true, memberCount: 4 },
   { id: 56, name: 'Agents platform sprint', initials: 'AP', color: '#5B5FC7', status: null, isGroup: true, memberCount: 5 },
+  // Private side panel mocks (?mock=copilot | asana | compare). `sidePanelMock`
+  // tells ChatView to render the Copilot / Asana header button + private panel.
+  { id: 60, name: 'Handoff v2.4 launch', initials: 'HL', color: '#038387', status: null, isGroup: true, memberCount: 6, sidePanelMock: true },
 ]
 
 // Teams the user belongs to. Each team has a list of channels (by contact id,
@@ -118,6 +121,7 @@ export const projectNorthwind = [
   { contactId: 39, bold: true },
   { contactId: 40, bold: true },
   { contactId: 56, bold: true },
+  { contactId: 60, bold: true },
   { contactId: 24 },
 ]
 

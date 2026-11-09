@@ -1774,4 +1774,14 @@ export const messagesByContact = {
       replies: [{ id: 'p9-r0', senderId: 43, text: "Here's my build plan." }],
     },
   ],
+  // Private side panel mocks — the group chat on the main stage. Three action
+  // items surface: James's PR is ready for review, Kevin covers Olivia's
+  // webhook task while she's OOO, and Sarah owns the handoff settings specs.
+  60: [
+    { id: 1, senderId: 7, text: "handoff analytics dashboard is code-complete 🎉 PR is up in northwind/agent-handoff — ready for review", time: '9:41 AM' },
+    { id: 2, senderId: 15, text: "nice. I'll pick up webhook retry + backoff from Olivia while she's OOO this week", time: '9:44 AM' },
+    { id: 3, senderId: 12, text: "thanks kevin. we still need final design specs for handoff settings before v2.4 — sarah can you own that by friday?", time: '9:46 AM' },
+    { id: 4, senderId: 1, text: "yep, on it 👍 will share the figma by EOD thu", time: '9:47 AM' },
+    { id: 5, senderId: 'me', text: "great — I'll get the asana board updated", time: '9:50 AM' },
+  ],
 }

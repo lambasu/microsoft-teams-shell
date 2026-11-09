@@ -91,6 +91,16 @@ const PROTOTYPES = [
     tag: 'Stage View · Thread',
     tagColor: '#5B5FC7',
   },
+  {
+    id: 'private-side-panel',
+    number: '10',
+    title: 'Private side panel — Copilot vs. Asana',
+    description:
+      'A group chat surfaces action items. A private side panel docks next to the chat — only you can see it. Variant A: Copilot invokes the Asana plugin to update the board from the conversation. Variant B: Asana\'s own dashboard opens directly in the panel. Opens a side-by-side comparison; nothing posts to the chat until you click Share.',
+    chat: 'Handoff v2.4 launch',
+    tag: 'Side panel · Compare',
+    tagColor: '#F06A6A',
+  },
 ]
 
 export default function PrototypeGallery({ onLaunch }) {
