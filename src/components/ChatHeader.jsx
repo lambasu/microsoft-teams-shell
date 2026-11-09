@@ -1,4 +1,5 @@
 import { Avatar, IconButton, ChatMultiple, Clock, Plus, Dots } from './common'
+import { copilotLogo, asanaLogo } from '../shared/assets'
 import './ChatHeader.css'
 
 // Teams-style chat header: avatar + name, inline tabs, and the right-side
@@ -17,10 +18,13 @@ export default function ChatHeader({
   pinnedTab,
   activeTab = 'chat',
   onSelectTab,
+  // Optional header button that toggles a private side panel:
+  // { kind: 'copilot' | 'asana', active, onClick }
+  sidePanelButton,
 }) {
   return (
     <div className="chat-view-header">
-      <div className="chat-header-row">
+      <div className={`chat-header-row${sidePanelButton?.active ? ' chat-header-row-compact' : ''}`}>
         <Avatar contact={activeContact} size={28} />
         <span className="chat-header-name">{activeContact.name}</span>
         <div className="chat-header-tabs">
@@ -57,6 +61,20 @@ export default function ChatHeader({
           </button>
         </div>
         <div className="chat-header-actions">
+          {sidePanelButton && (
+            <button
+              className={`header-app-btn${sidePanelButton.active ? ' header-app-btn-active' : ''}`}
+              aria-pressed={sidePanelButton.active}
+              onClick={sidePanelButton.onClick}
+            >
+              <img
+                src={sidePanelButton.kind === 'asana' ? asanaLogo : copilotLogo}
+                alt=""
+                className="header-app-btn-icon"
+              />
+              <span>{sidePanelButton.kind === 'asana' ? 'Asana' : 'Copilot'}</span>
+            </button>
+          )}
           <button className="meet-now-btn" aria-label="Meet now">
             <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <rect x="2" y="4" width="12" height="11" rx="1.5"/>

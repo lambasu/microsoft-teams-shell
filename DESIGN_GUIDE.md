@@ -13,6 +13,7 @@
 | Chat Canvas | `#FFFFFF` | Main area where chat messages are displayed |
 | Agents Rail | `#FAFAFA` | Right-side rail for per-conversation agents |
 | Channel Thread Rail | `#FFFFFF` | Right-side rail for a channel post's replies |
+| Private Side Panel | `#FFFFFF` | Docked right-side panel hosting Copilot or an app privately (380px, privacy strip `#F5F5F5`) |
 
 The title bar, app bar, and chat list form a cool neutral palette that matches current Microsoft Teams. The chat list is slightly lighter than the chrome so its surface reads as a container nested inside it. The search bar is the lightest surface in the header, floating on top of the title bar.
 
@@ -214,6 +215,16 @@ Channels appear in the chat list grouped under their parent team:
 - Teams are defined in `contacts.js` via the `teams` export (id, name, initials, color, `channels: [{ id, bold? }]`).
 - Team icons use the rounded-square treatment (same as channel avatars), indent-aligned with their channel rows.
 - Clicking a channel selects it; channel chats use the "Conversation" / "Shared" tabs (vs "Chat" / "Shared" / "Recap" / "Storyline" for regular chats).
+
+## Private Side Panel
+
+A docked right-hand panel (`PrivateSidePanel`) that hosts Copilot or a third-party app next to a chat, visible only to the signed-in user.
+
+- **Geometry:** 380px wide, 56px header, `1px solid #E8E8E8` left border + dividers (matches the agents rail). White body.
+- **Header:** 24px app icon + 14px/600 title + 11px `#616161` subtitle (what it's grounded on / linked to), then icon actions: optional app action, pop-out, close.
+- **Privacy strip:** full-width band under the header — lock icon + "**Private** · Only you can see this…" in 11px `#616161` on `#F5F5F5`. Always present; nothing reaches the chat until the user clicks **Share to chat**.
+- **Header toggle:** opened from an icon + label pill in the chat header (`.header-app-btn`). Active state uses the Teams purple tint (`rgba(98,100,167,0.08)` fill, `#6264A7` text). While open, the chat header collapses "Meet now" to icon-only and trailing tabs wrap out of view.
+- **Hosted app UI (e.g. Asana):** use the app's own neutral palette inside the panel (Asana: `#1E1F21` text, `#6D6E6F` secondary, `#EDEAE9` borders, `#F06A6A` coral accent) so it reads as a third-party surface inside Teams chrome. Teams-owned actions (Share to chat) stay Teams purple.
 
 ## Demo Hint Arrows
 

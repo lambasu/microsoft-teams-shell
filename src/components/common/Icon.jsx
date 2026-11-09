@@ -138,3 +138,49 @@ export function Lock({ size = 12 }) {
     </svg>
   )
 }
+
+export function PopOut({ size = 16, stroke = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11 3.5h5.5V9"/>
+      <path d="M16.5 3.5L9.5 10.5"/>
+      <path d="M14.5 12v2.5a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2H8"/>
+    </svg>
+  )
+}
+
+export function Refresh({ size = 16, stroke = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M16 10a6 6 0 1 1-1.76-4.24"/>
+      <path d="M16 3.5v3.25h-3.25"/>
+    </svg>
+  )
+}
+
+export function ArrowRight({ size = 16, stroke = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 10h12M11.5 5.5L16 10l-4.5 4.5"/>
+    </svg>
+  )
+}
+
+export function PersonSwap({ size = 16, stroke = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="8" cy="6" r="3"/>
+      <path d="M2.5 16c0-3 2.5-5 5.5-5 1.2 0 2.3.3 3.2.9"/>
+      <path d="M13 13.5h5M16 11.5l2 2-2 2"/>
+    </svg>
+  )
+}
+
+export function Share({ size = 16, stroke = 'currentColor' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 20 20" fill="none" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M11.5 4.5L16 9l-4.5 4.5"/>
+      <path d="M16 9H9a5 5 0 0 0-5 5v1.5"/>
+    </svg>
+  )
+}

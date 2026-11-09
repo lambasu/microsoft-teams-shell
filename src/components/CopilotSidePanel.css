@@ -1,0 +1,262 @@
+.cps-body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #FFFFFF;
+}
+
+/* ── User prompt ── */
+.cps-user {
+  align-self: flex-end;
+  max-width: 88%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.cps-user-bubble {
+  background: #E8EBFA;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #242424;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cps-context-chip {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #FFFFFF;
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  padding: 2px 8px 2px 6px;
+  font-size: 12px;
+  color: #424242;
+}
+
+.cps-context-chip svg { color: #5B5FC7; }
+.cps-context-name { font-weight: 600; }
+.cps-context-meta { color: #616161; }
+
+.cps-time {
+  font-size: 12px;
+  color: #616161;
+}
+
+/* ── Copilot response ── */
+.cps-bot {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.cps-bot-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cps-bot-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.cps-bot-name {
+  font-size: 12px;
+  color: #424242;
+}
+
+.cps-plugin-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px 3px 6px;
+  border: 1px solid #E0E0E0;
+  border-radius: 999px;
+  background: #FAFAFA;
+  font-size: 12px;
+  color: #424242;
+}
+
+.cps-plugin-chip img {
+  width: 14px;
+  height: 14px;
+}
+
+.cps-plugin-chip strong { font-weight: 600; }
+
+.cps-bot .chain-of-thought { margin-top: 0; }
+
+.cps-bot-text {
+  margin: 0;
+  font-size: 14px;
+  color: #242424;
+}
+
+/* ── Asana result card (extends .adaptive-card) ── */
+.cps-asana-card {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.cps-asana-tile {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #FFF1F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cps-asana-tile img {
+  width: 20px;
+  height: 20px;
+}
+
+.cps-changes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.cps-change {
+  display: flex;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid #F0F0F0;
+}
+
+.cps-change-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  margin-top: 1px;
+}
+
+.cps-change-icon-move { background: #5B5FC7; }
+.cps-change-icon-create { background: #5DA283; }
+.cps-change-icon-reassign { background: #E8A33D; }
+
+.cps-change-text { min-width: 0; }
+
+.cps-change-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #242424;
+  line-height: 18px;
+}
+
+.cps-change-detail {
+  font-size: 12px;
+  color: #616161;
+  margin-top: 1px;
+}
+
+.cps-asana-card-undone .cps-change-title,
+.cps-asana-card-undone .cps-change-detail {
+  text-decoration: line-through;
+  color: #9E9E9E;
+}
+
+.cps-asana-card-undone .cps-change-icon {
+  background: #BDBDBD;
+}
+
+.cps-card-actions {
+  align-items: center;
+}
+
+.cps-card-actions .card-action-btn:disabled {
+  color: #BDBDBD;
+  cursor: default;
+  text-decoration: none;
+}
+
+.cps-shared {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #107C10;
+}
+
+/* ── Follow-up suggestions ── */
+.cps-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cps-suggestion {
+  background: #FFFFFF;
+  border: 1px solid #D1D1D1;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  color: #424242;
+  cursor: pointer;
+}
+
+.cps-suggestion:hover {
+  background: #F5F5F5;
+  border-color: #BDBDBD;
+}
+
+/* ── Compose ── */
+.cps-compose-wrap {
+  padding: 12px 16px 16px;
+}
+
+.cps-compose {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #D1D1D1;
+  border-radius: 8px;
+  padding: 4px 4px 4px 12px;
+  background: #FFFFFF;
+}
+
+.cps-compose:focus-within {
+  border-color: #5B5FC7;
+}
+
+.cps-compose-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: #242424;
+  padding: 6px 0;
+  background: transparent;
+}
+
+.cps-compose-input::placeholder { color: #707070; }
+
+.cps-send {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  color: #5B5FC7;
+}
+
+.cps-send:hover { background: #F0F0F0; }

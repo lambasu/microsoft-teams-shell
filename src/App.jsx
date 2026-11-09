@@ -6,6 +6,7 @@ import ChatView from './components/ChatView'
 import ActivityList from './components/ActivityList'
 import TitleBar from './components/TitleBar'
 import PrototypeGallery from './components/PrototypeGallery'
+import SidePanelCompare from './components/SidePanelCompare'
 import { FreModal } from './components/common'
 import './App.css'
 
@@ -20,28 +21,32 @@ const PROTOTYPE_CHAT = {
   'lovable-stage-view': 44,
   'lovable-live-edit': 55,
   'lovable-thread-prototype': 56,
+  'private-side-panel': 60,
+}
+
+// Private side panel mocks: ?mock=copilot | ?mock=asana render one variant at
+// full size; ?mock=compare renders both side by side (SidePanelCompare).
+const MOCK_PARAM = new URLSearchParams(window.location.search).get('mock')
+const SIDE_PANEL_MOCK = ['copilot', 'asana', 'compare'].includes(MOCK_PARAM) ? MOCK_PARAM : null
+
+function initialPrototype() {
+  if (SIDE_PANEL_MOCK) return 'private-side-panel'
+  const p = new URLSearchParams(window.location.search).get('prototype')
+  return PROTOTYPE_CHAT[p] ? p : null
 }
 
 export default function App() {
+  if (SIDE_PANEL_MOCK === 'compare') return <SidePanelCompare />
+  return <TeamsApp />
+}
+
+function TeamsApp() {
   // True when the user arrived via a ?prototype= deep link — hides the back-to-gallery button.
-  const [isDeepLinked] = useState(() => {
-    const p = new URLSearchParams(window.location.search).get('prototype')
-    return !!PROTOTYPE_CHAT[p]
-  })
-  const [selectedPrototype, setSelectedPrototype] = useState(() => {
-    const p = new URLSearchParams(window.location.search).get('prototype')
-    return PROTOTYPE_CHAT[p] ? p : null
-  })
+  const [isDeepLinked] = useState(() => !!initialPrototype())
+  const [selectedPrototype, setSelectedPrototype] = useState(initialPrototype)
   const [activeView, setActiveView] = useState('chat') // 'chat' | 'activity'
-  const [activeChatId, setActiveChatId] = useState(() => {
-    const p = new URLSearchParams(window.location.search).get('prototype')
-    return PROTOTYPE_CHAT[p] || 35
-  })
-  const [readChatIds, setReadChatIds] = useState(() => {
-    const p = new URLSearchParams(window.location.search).get('prototype')
-    const chatId = PROTOTYPE_CHAT[p] || 35
-    return new Set([chatId])
-  })
+  const [activeChatId, setActiveChatId] = useState(() => PROTOTYPE_CHAT[initialPrototype()] || 35)
+  const [readChatIds, setReadChatIds] = useState(() => new Set([PROTOTYPE_CHAT[initialPrototype()] || 35]))
   const [sessions, setSessions] = useState(initialSessions)
   const [dynamicSessionMessages, setDynamicSessionMessages] = useState({})
   // Activity feed: persist which events the user has opened so unread decorations clear.
@@ -59,6 +64,10 @@ export default function App() {
   const dismissFre = useCallback(() => setShowFre(false), [])
 
   const launchPrototype = useCallback((id) => {
+    if (id === 'private-side-panel') {
+      window.location.search = '?mock=compare'
+      return
+    }
     const chatId = PROTOTYPE_CHAT[id]
     setSelectedPrototype(id)
     setActiveChatId(chatId)
@@ -167,6 +176,11 @@ export default function App() {
           dynamicSessionMessages={dynamicSessionMessages}
           navIntent={navIntent}
           clearNavIntent={clearNavIntent}
+          sidePanelVariant={
+            selectedPrototype === 'private-side-panel'
+              ? (SIDE_PANEL_MOCK === 'asana' ? 'asana' : 'copilot')
+              : null
+          }
         />
       </div>
       {showFre && selectedPrototype === 'day-one-agent-onboarding' && (

@@ -1,0 +1,282 @@
+/* Asana app hosted in the private side panel. Uses Asana's own neutral
+   palette (#1E1F21 text, #6D6E6F secondary, #EDEAE9 borders, coral accent)
+   so it reads as a third-party app surface inside Teams chrome. */
+.asp-body {
+  display: flex;
+  flex-direction: column;
+  color: #1E1F21;
+}
+
+/* ── Project header ── */
+.asp-project {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px 10px;
+}
+
+.asp-project-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #9EE7E3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.asp-project-text { min-width: 0; }
+
+.asp-project-name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.asp-project-meta {
+  font-size: 11px;
+  color: #6D6E6F;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.asp-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #5DA283;
+}
+
+/* ── Buttons ── */
+.asp-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #CFCBCB;
+  border-radius: 6px;
+  background: #FFFFFF;
+  padding: 5px 12px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1E1F21;
+  cursor: pointer;
+}
+
+.asp-btn:hover { background: #F9F8F8; }
+
+.asp-btn-sm {
+  margin-left: auto;
+  padding: 4px 10px;
+}
+
+.asp-btn-primary {
+  background: #5B5FC7;
+  border-color: #5B5FC7;
+  color: #FFFFFF;
+}
+
+.asp-btn-primary:hover { background: #4F53B0; }
+
+/* ── Tabs ── */
+.asp-tabs {
+  display: flex;
+  gap: 16px;
+  padding: 0 16px;
+  border-bottom: 1px solid #EDEAE9;
+}
+
+.asp-tab {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  font-family: inherit;
+  font-size: 13px;
+  color: #6D6E6F;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+
+.asp-tab:hover { color: #1E1F21; }
+
+.asp-tab-active {
+  color: #1E1F21;
+  font-weight: 600;
+  border-bottom-color: #1E1F21;
+}
+
+/* ── Dashboard ── */
+.asp-dashboard {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #F9F8F8;
+  flex: 1;
+}
+
+.asp-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.asp-tile {
+  background: #FFFFFF;
+  border: 1px solid #EDEAE9;
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+
+.asp-tile-value {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.asp-tile-label {
+  font-size: 11px;
+  color: #6D6E6F;
+}
+
+.asp-red { color: #C92F54; }
+
+.asp-chart {
+  background: #FFFFFF;
+  border: 1px solid #EDEAE9;
+  border-radius: 8px;
+  padding: 10px 12px 8px;
+}
+
+.asp-chart-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.asp-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  height: 96px;
+}
+
+.asp-bar-col {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 3px;
+}
+
+.asp-bar {
+  display: block;
+  width: 100%;
+  max-height: calc(100% - 34px);
+  border-radius: 3px 3px 0 0;
+}
+
+.asp-bar-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: #1E1F21;
+}
+
+.asp-bar-label {
+  font-size: 10.5px;
+  color: #6D6E6F;
+  white-space: nowrap;
+}
+
+.asp-section-title {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.asp-tasks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #FFFFFF;
+  border: 1px solid #EDEAE9;
+  border-radius: 8px;
+}
+
+.asp-task {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+}
+
+.asp-task + .asp-task { border-top: 1px solid #EDEAE9; }
+
+.asp-check {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid #9CA6AF;
+  color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.asp-check-done {
+  background: #5DA283;
+  border-color: #5DA283;
+  color: #FFFFFF;
+}
+
+.asp-task-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.asp-task-done .asp-task-name { color: #6D6E6F; }
+
+/* Coral dot — "updated from this chat" marker. */
+.asp-changed {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #F06A6A;
+  flex-shrink: 0;
+}
+
+.asp-due {
+  width: 58px;
+  text-align: right;
+  font-size: 11px;
+  color: #6D6E6F;
+  flex-shrink: 0;
+}
+
+/* ── Footer ── */
+.asp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+}
+
+.asp-due.asp-red { color: #C92F54; }
+
+.asp-shared {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #107C10;
+}

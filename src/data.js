@@ -9,3 +9,4 @@ export { copilotAgent, designerAgent, pollyAgent, breakthuAgent } from './data/a
 export { promptSuggestions } from './data/promptSuggestions'
 export { activityEvents } from './data/activityEvents'
 export { contextBriefs } from './data/contextBriefs'
+export { SIDE_PANEL_CHAT_ID, asanaChanges, copilotSidePanel, asanaSidePanel, sidePanelShareMessage } from './data/sidePanel'

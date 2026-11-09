@@ -269,6 +269,7 @@ export default function StageView9({ threadMessages, threadTyping, beat, onUpdat
   // beat 8: text update applied → switch to v2
   useEffect(() => {
     if (beat !== 8) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat kicks off a timed animation
     setBannerState('updating')
     const t = setTimeout(() => {
       setDisplayVersion('v2')

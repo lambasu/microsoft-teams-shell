@@ -11,8 +11,8 @@ import './ChainOfThought.css'
 // string[]`; MessageRow renders this component at the very bottom of the
 // bubble. The box adopts the bubble's background (transparent) so it works
 // equally well in mine vs. theirs bubbles.
-export default function ChainOfThought({ steps, label = 'Completed steps' }) {
-  const [expanded, setExpanded] = useState(false)
+export default function ChainOfThought({ steps, label = 'Completed steps', defaultExpanded = false }) {
+  const [expanded, setExpanded] = useState(defaultExpanded)
   if (!steps || steps.length === 0) return null
   return (
     <div className={`chain-of-thought${expanded ? ' chain-of-thought-expanded' : ''}`}>

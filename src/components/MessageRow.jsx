@@ -230,6 +230,7 @@ function ThreadReplyBadge({ reply, onClick }) {
 }
 
 export default function MessageRow({ message, activeContact, onOpenThread, onTargetedAction, onCardAction, onReact }) {
+  const [myReactions, setMyReactions] = useState(() => new Set())
   if (message.isSystem) {
     return (
       <div className="system-message">
@@ -252,7 +253,6 @@ export default function MessageRow({ message, activeContact, onOpenThread, onTar
       ? contacts.find(c => c.id === message.senderId)
       : activeContact
 
-  const [myReactions, setMyReactions] = useState(() => new Set())
   const toggleReaction = (emoji) => {
     setMyReactions(prev => {
       const next = new Set(prev)

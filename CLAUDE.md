@@ -67,6 +67,12 @@ Single-page React 19 app built with Vite 8. No routing, no state management libr
 - **AgentsRail** — agents in the current conversation + per-agent private chat thread
 - **ChannelThreadRail** — a channel post's replies thread (channel chats only; opens when a reply indicator is clicked, or when an Activity event points at a channel reply)
 
+### Mock query params
+
+- `?mock=copilot` / `?mock=asana` — open the "Handoff v2.4 launch" group chat (contact 60) with the private side panel docked (Copilot invoking the Asana plugin, or the Asana app directly)
+- `?mock=compare` — both variants side by side (`SidePanelCompare`)
+- No `mock` param → the default gallery/shell is unchanged
+
 ### State lives in `App.jsx`
 
 Hoisted so rails and the canvas stay in sync:
@@ -92,6 +98,7 @@ All mocks live in `src/data/` and are re-exported by `src/data.js` (the barrel).
 - `sessions.js` — `agentSessions`, the initial per-agent session lists
 - `sessionMessages.js` — message history keyed by session id
 - `promptSuggestions.js` — the 2×3 grid of prompt cards shown in the empty state for a new agent session, keyed by agent contact id
+- `sidePanel.js` — private side panel mocks: `copilotSidePanel`, `asanaSidePanel`, the shared `asanaChanges`, and `sidePanelShareMessage` (posted only on explicit Share to chat)
 - `activityEvents.js` — `activityEvents`, the chronological notification feed (reactions, replies, mentions) referenced by contact/message/post ids
 
 ### Contact types
@@ -119,6 +126,8 @@ Channels are additionally grouped into teams via the `teams` export. Each team h
   - `MessageActions` — hover toolbar above a message (quick reactions, emoji picker, edit, more)
   - `PromptSuggestions` — empty-state 2×3 grid of suggestion cards for a new agent session
   - `SessionsRail`, `AgentsRail`, `ChannelThreadRail` — the right-side rails
+  - `PrivateSidePanel` — docked, private right-hand panel chrome (header, "only you can see this" strip, body, footer). Hosts `CopilotSidePanel` (Variant A) and `AsanaSidePanel` (Variant B) for chats flagged `sidePanelMock`
+  - `SidePanelCompare` — `?mock=compare` page that renders `?mock=copilot` and `?mock=asana` side by side in scaled iframes
 
 ### Styling
 
@@ -139,8 +148,8 @@ A component appearing here doesn't mean it's actively used in the default repo �
 | `TypingIndicator` | Canonical "X is typing" UI — avatar + 3 bouncing dots. **Whenever a task says "typing indicator", it means this.** | `contact`, `avatarSize = 32`, `dotSize = 5`, `className?` | Component owns only the avatar + dots visual; positioning is the caller's job. Main canvas: floats above `Compose` with the avatar's bottom ~10% tucked behind the compose box top edge (see `.chat-compose-area` / `.chat-compose-typing` in `ChatView.css`). Agents rail: in-flow above the rail compose. Add new surface-specific CSS rather than forking the component. |
 | `DemoArrow` | Red pulsing arrow that cues the viewer to the next click target during a prototype walkthrough. **Whenever a task says "red arrow" / "demo arrow" / "hint arrow" to guide the viewer, it means this.** | `direction: 'left' \| 'right' \| 'up' \| 'down'`, `size = 24`, `className?` | Owns only the visual + pulse animation (uses the `translate` CSS property so caller `transform` doesn't collide). Caller handles absolute positioning near the target and should set `pointer-events: none` on the wrapper so clicks still land on the target. **Ephemeral**: track show/hide state wherever the target's click handler lives and unmount once the target is clicked. See `DESIGN_GUIDE.md` → "Demo Hint Arrows". |
 | `FreModal` | First-run-experience modal. Modern welcome layout: gradient hero band with a floating icon badge, centered title + subtitle, scrollable body, fixed footer with a single primary dismiss button. Click on the overlay or pressing Escape also dismisses. | `title`, `subtitle?`, `children` (body), `onDismiss`, `dismissLabel = 'Got it'` | App.jsx currently shows it on every load (per-session dismiss only). To gate it as a true first-run, persist the dismissed state to `localStorage` in `dismissFre` and read it in the `showFre` initializer. CSS exposes `.fre-feature-list` / `.fre-feature` / `.fre-feature-check` / `.fre-feature-text` / `.fre-feature-title` / `.fre-feature-desc` helper classes for checkmark feature lists, and `.fre-modal-footnote` for a small footnote line below the body. |
-| `ChainOfThought` | Post-reasoning trace shown at the bottom of an agent's result message — the Teams/Claude/ChatGPT "Show steps" pattern. Collapsed: gray check-circle icon + label + right chevron. Expanded: list of completed steps, each with a check-circle. Box uses a thin outline and transparent background so it adopts the surrounding bubble color. | `steps: string[] \| { text: string }[]`, `label = 'Completed steps'` | Attach to a message via `message.chainOfThought` — `MessageRow` renders the component at the very bottom of the bubble (after cards). Use only on the **final completion message of a task** (skip intermediate confirmations, "running…" messages, simple recall, or clarifications). Reusable across agents — currently only attached to Cowork's result messages but the data field is generic. |
-| `Icon` library | Shared SVG icons exported from `components/common/Icon.jsx`: `Close`, `Plus`, `ChevronDown`, `ChevronLeft`, `ChevronRight`, `Send`, `Clock`, `Search`, `Dots`, `EmojiAdd`, `Edit`, `Check`, `CheckCircle`, `Info`, `ChatMultiple`, `Lock`. | Each takes `size`; stroked icons (`Clock`, `EmojiAdd`, `Edit`, `Check`, `CheckCircle`, `Info`, `ChatMultiple`) also take `stroke`. | When adding a new icon, start at [fluenticons.co](https://fluenticons.co/) (Fluent UI — matches Teams). Add it here instead of inlining SVG in a feature component. |
+| `ChainOfThought` | Post-reasoning trace shown at the bottom of an agent's result message — the Teams/Claude/ChatGPT "Show steps" pattern. Collapsed: gray check-circle icon + label + right chevron. Expanded: list of completed steps, each with a check-circle. Box uses a thin outline and transparent background so it adopts the surrounding bubble color. | `steps: string[] \| { text: string }[]`, `label = 'Completed steps'`, `defaultExpanded = false` | Attach to a message via `message.chainOfThought` — `MessageRow` renders the component at the very bottom of the bubble (after cards). Use only on the **final completion message of a task** (skip intermediate confirmations, "running…" messages, simple recall, or clarifications). Reusable across agents — currently only attached to Cowork's result messages but the data field is generic. |
+| `Icon` library | Shared SVG icons exported from `components/common/Icon.jsx`: `Close`, `Plus`, `ChevronDown`, `ChevronLeft`, `ChevronRight`, `Send`, `Clock`, `Search`, `Dots`, `EmojiAdd`, `Edit`, `Check`, `CheckCircle`, `Info`, `ChatMultiple`, `Lock`, `PopOut`, `Refresh`, `ArrowRight`, `PersonSwap`, `Share`. | Each takes `size`; stroked icons (`Clock`, `EmojiAdd`, `Edit`, `Check`, `CheckCircle`, `Info`, `ChatMultiple`, `PopOut`, `Refresh`, `ArrowRight`, `PersonSwap`, `Share`) also take `stroke`. | When adding a new icon, start at [fluenticons.co](https://fluenticons.co/) (Fluent UI — matches Teams). Add it here instead of inlining SVG in a feature component. |
 
 ## Key Conventions
 

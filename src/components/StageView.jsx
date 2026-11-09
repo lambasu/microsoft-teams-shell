@@ -256,6 +256,7 @@ export default function StageView({ version = 'v1', onVersionChange, beat, onBea
   useEffect(() => {
     if (version !== prevVersionRef.current && version !== displayVersion && bannerState === null) {
       prevVersionRef.current = version
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- scripted demo beat kicks off a timed animation
       setBannerState('updating')
       const applyTimer = setTimeout(() => {
         setDisplayVersion(version)
